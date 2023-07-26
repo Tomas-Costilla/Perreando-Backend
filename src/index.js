@@ -1,3 +1,4 @@
+/* Develop mode */
 const app = require('./server/server')
 const {PORT} = require('./config/globals')
 const getConnection = require("./dao/connection")
