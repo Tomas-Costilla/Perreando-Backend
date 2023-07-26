@@ -2,7 +2,8 @@ const {userModel} = require("../../dao/db");
 const { createHash } = require("../../utils/bcrypt");
 const {UserError} = require("../../utils/errors")
 const {uploadImage} = require("../../utils/cloudinary")
-const {CLOUDINARY_IMAGEURL} = require("../../config/globals")
+const {CLOUDINARY_IMAGEURL,API_GEO_URL} = require("../../config/globals")
+const axios = require("axios")
 
 const userService = () =>({
     async createUser(user,image){
@@ -30,6 +31,14 @@ const userService = () =>({
             ...userDB._doc,
             userFileUri: `${CLOUDINARY_IMAGEURL}${userDB.userImageName}.webp`
         }       
+    },
+    async getAllUbications(){
+        try {
+            let {data} = await axios.get(`${API_GEO_URL}?provincia=06&campos=id,nombre&orden=nombre&max=1000`)
+            return data.localidades
+        } catch (error) {
+            return error.message
+        }
     }
 })
 

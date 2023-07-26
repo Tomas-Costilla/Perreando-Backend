@@ -45,6 +45,14 @@ const userController = ({userService}) =>({
         } catch (error) {
             res.status(500).json(error.message)
         }
+    },
+    async userGetAllUbicationController(req,res){
+        try {
+            let result = await userService.getAllUbications()
+            res.json({message: "Localidades disponibles",resultado: result})
+        } catch (error) {
+            res.status(500).json({message: "Existio un error en la peticion",error: error.message})
+        }
     }
 })
 module.exports = userController; 

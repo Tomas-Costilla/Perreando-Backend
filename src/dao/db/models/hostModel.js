@@ -10,6 +10,10 @@ const hostModel = new Schema({
     hostOwnerCapacity:Number,
     hostPrice:Number,
     hostTypeAnimals:String,
+    hostAnimalWeightFrom:Number,
+    hostAnimalWeightTo:Number,
+    hostAnimalAgeFrom:Number,
+    hostAnimalAgeTo:Number,
     hostGuests: {
         type: [
             {

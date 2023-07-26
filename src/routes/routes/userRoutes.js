@@ -12,7 +12,9 @@ module.exports = (router,{userController})=>{
         .post("/user/signin",passport.authenticate('login',{failureRedirect:"/user/accessdenied"}),userController.loginUserController)
         .get("/user/accessdenied",userController.userLoginAccess)
         .post("/user/signup",userController.userSignUpController)
+        .get("/user/ubications",userController.userGetAllUbicationController)
         .get("/user/:id",IsAuthenticated,userController.userGetInfoController)
+      /*   .get("/user/ubis",(req,res)=>{res.json("todo ok")}) */
 
     return router;
 }
