@@ -39,6 +39,14 @@ const userService = () =>({
         } catch (error) {
             return error.message
         }
+    },
+    async updateUserDate(userId,userData){
+        try {
+            await userModel.findByIdAndUpdate(userId,userData)
+            return {message: "Datos actualizados con exito"}
+        } catch (error) {
+            throw new Error("No se pudo actualizar el usuario")
+        }
     }
 })
 

@@ -50,6 +50,15 @@ const hostController = ({hostService}) => ({
         } catch (error) {
             res.json(error.message)
         }
+    },
+    async checkExistHostController(req,res){
+        let {ownerId} = req.params
+        try {
+            const idExist = await hostService.checkifHostExistService(ownerId)
+            res.json({message: "Resultado de la operacion",result: idExist})
+        } catch (error) {
+            res.status(500).json({message: error.message})
+        }
     }
 })
 

@@ -13,6 +13,7 @@ module.exports = (router,{userController})=>{
         .get("/user/accessdenied",userController.userLoginAccess)
         .post("/user/signup",userController.userSignUpController)
         .get("/user/ubications",userController.userGetAllUbicationController)
+        .put("/user/:userId",userController.updateUserDataController)
         .get("/user/:id",IsAuthenticated,userController.userGetInfoController)
       /*   .get("/user/ubis",(req,res)=>{res.json("todo ok")}) */
 

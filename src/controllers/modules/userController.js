@@ -53,6 +53,15 @@ const userController = ({userService}) =>({
         } catch (error) {
             res.status(500).json({message: "Existio un error en la peticion",error: error.message})
         }
+    },
+    async updateUserDataController(req,res){
+        let {userId} = req.params
+        try {
+            const result = await userService.updateUserDate(userId,req.body)
+            res.json(result)
+        } catch (error) {
+            res.status(500).json({error: true, message: error.message})            
+        }
     }
 })
 module.exports = userController; 

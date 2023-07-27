@@ -28,6 +28,15 @@ const hostService = () => ({
     },
     async deleteHostService(hostId){
         return hostModel.findByIdAndDelete(hostId)
+    },
+    async checkifHostExistService(ownerId){
+        try {
+            const dataDB = await hostModel.findOne({hostOwnerId: ownerId})
+            if(dataDB) return true
+            else return false
+        } catch (error) {
+            throw new Error("Ocurrio un error en la base de datos")
+        }
     }
 })
 
