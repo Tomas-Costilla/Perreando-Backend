@@ -1,4 +1,4 @@
-const {hostModel} = require("../../dao/db")
+const {hostModel,hostRating} = require("../../dao/db")
 
 const hostService = () => ({
     async createHostService(data){
@@ -22,8 +22,13 @@ const hostService = () => ({
     async updateHostService(id,data){
         return hostModel.findByIdAndUpdate(id,data)
     },
-    async deleteHostService(hostId){
-        return hostModel.findByIdAndDelete(hostId)
+    async deleteHostService(hostowId){
+        try {
+            await hostModel.findOneAndDelete({hostOwnerId: hostowId})
+            await hostRating.findOneAndDelete({hostOwnerId: hostowId})
+        } catch (error) {
+            return error.message
+        }
     },
     async checkifHostExistService(ownerId){
         try {
@@ -32,6 +37,15 @@ const hostService = () => ({
             else return false
         } catch (error) {
             throw new Error("Ocurrio un error en la base de datos")
+        }
+    },
+    async getGuestHostInfo(guestId){
+        try {
+            const guestData = await hostModel.findOne({"hostGuests.guestId":guestId})
+            if(!guestData) return {}
+            return guestData
+        } catch (error) {
+            return error.message
         }
     }
 })

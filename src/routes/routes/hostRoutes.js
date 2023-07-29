@@ -10,6 +10,7 @@ module.exports = (router,{hostController}) => {
         .put("/host/:id",IsAuthenticated,hostController.updateHost)
         .delete("/host/:id",IsAuthenticated,hostController.deleteHost)
         .get("/host/check/:ownerId",IsAuthenticated,hostController.checkExistHostController)
+        .get("/host/guest/:guestId",IsAuthenticated,hostController.getGuestHostController)
 
     return router;
 }

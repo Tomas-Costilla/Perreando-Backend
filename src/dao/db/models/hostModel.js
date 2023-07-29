@@ -31,12 +31,19 @@ hostModel.pre('findOne',function(){
         userFullName:1,
         userEmail:1,
         userImageName: 1,
-        userUbication:1
+        userEmail:1,
+        userPhone:1,
+        userUbication:1,
+        userAddressStreet:1,
+        userAddressNumber:1,
+        userAddressBetwStreet:1,
+        userAddressExtraInfo:1
     })
     this.populate('hostGuests.guestId',{
         userFullName:1,
         userPhone:1,
-        userImageName: 1
+        userImageName: 1,
+        userEmail:1
     })
 })
 

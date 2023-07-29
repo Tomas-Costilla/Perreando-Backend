@@ -60,6 +60,15 @@ const hostController = ({hostService}) => ({
         } catch (error) {
             res.status(500).json({message: error.message})
         }
+    },
+    async getGuestHostController(req,res){
+        let {guestId} = req.params
+        try {
+            const result = await hostService.getGuestHostInfo(guestId)
+            res.json(result)
+        } catch (error) {
+            res.status(500).json(error.message)
+        }
     }
 })
 
