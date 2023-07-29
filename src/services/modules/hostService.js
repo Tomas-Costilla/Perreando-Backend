@@ -19,12 +19,8 @@ const hostService = () => ({
     async getHostInfobyOwnerService(ownerId){
         return hostModel.findOne({hostOwnerId: ownerId})
     },
-    async updateHostService(data){
-        return hostModel.findByIdAndUpdate(data._id,{
-            hostDescription: data.hostDescription,
-            hostOwnerCapacity:data.hostOwnerCapacity,
-            hostPrice:data.hostPrice
-        })
+    async updateHostService(id,data){
+        return hostModel.findByIdAndUpdate(id,data)
     },
     async deleteHostService(hostId){
         return hostModel.findByIdAndDelete(hostId)

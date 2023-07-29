@@ -7,7 +7,7 @@ module.exports = (router,{hostController}) => {
         .post("/host/guest",IsAuthenticated,hostController.addGuestToHost)
         .get("/host/:id",IsAuthenticated,hostController.getHostInfo)
         .get("/host/owner/:id",IsAuthenticated,hostController.getHostInfobyOwner)
-        .put("/host",IsAuthenticated,hostController.updateHost)
+        .put("/host/:id",IsAuthenticated,hostController.updateHost)
         .delete("/host/:id",IsAuthenticated,hostController.deleteHost)
         .get("/host/check/:ownerId",IsAuthenticated,hostController.checkExistHostController)
 

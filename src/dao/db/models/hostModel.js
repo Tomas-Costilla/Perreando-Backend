@@ -30,7 +30,8 @@ hostModel.pre('findOne',function(){
     this.populate('hostOwnerId',{
         userFullName:1,
         userEmail:1,
-        userImageName: 1
+        userImageName: 1,
+        userUbication:1
     })
     this.populate('hostGuests.guestId',{
         userFullName:1,

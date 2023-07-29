@@ -35,8 +35,9 @@ const hostController = ({hostService}) => ({
         }
     },
     async updateHost(req,res){
+        const {id} = req.params
         try {
-            await hostService.updateHostService(req.body)
+            await hostService.updateHostService(id,req.body)
             res.json("Se ha modificado con exito")
         } catch (error) {
             res.json(error.message)
