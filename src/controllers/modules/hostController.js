@@ -69,6 +69,27 @@ const hostController = ({hostService}) => ({
         } catch (error) {
             res.status(500).json(error.message)
         }
+    },
+    async deleteGuestFromHostController(req,res){
+        let {hostId} = req.params
+        try {
+            const result = await hostService.deleteGuestFromHost(hostId,req.body.userEmail)
+            res.json(result)
+        } catch (error) {
+            res.status(500).json(error.message)
+        }
+    },
+    async getAllHostbyUbicationController(req,res){
+        console.log("llega")
+        console.log(req)
+        let {ubiName} = req.query
+        console.log(ubiName)
+        try {
+            const result = await hostService.getAllHostbyUbication(ubiName)
+            res.json(result)
+        } catch (error) {
+            res.status(500).json({message: error.message})
+        }
     }
 })
 

@@ -11,6 +11,8 @@ module.exports = (router,{hostController}) => {
         .delete("/host/:id",IsAuthenticated,hostController.deleteHost)
         .get("/host/check/:ownerId",IsAuthenticated,hostController.checkExistHostController)
         .get("/host/guest/:guestId",IsAuthenticated,hostController.getGuestHostController)
+        .get("/host/search",IsAuthenticated,hostController.getAllHostbyUbicationController)
+        .delete("/host/guest/:hostId",IsAuthenticated,hostController.deleteGuestFromHostController)
 
     return router;
 }

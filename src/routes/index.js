@@ -10,6 +10,7 @@ module.exports = (routes) =>{
     /* Router Config */
     router
         /* .use(express.static()) */
+        .use(express.urlencoded({extended: true}))
         .use(express.json())
         .use(cors())
         .use(compression())

@@ -47,6 +47,25 @@ const hostService = () => ({
         } catch (error) {
             return error.message
         }
+    },
+    async deleteGuestFromHost(hostId,guestEmail){
+        try {   
+            const {hostGuests} = await hostModel.findById(hostId)
+            const newDataWithoutGuest = hostGuests.filter(data=>data.guestId.userEmail !== guestEmail)
+            const result = await hostModel.updateOne({_id: hostId},{hostGuests: newDataWithoutGuest})
+
+            if(result.modifiedCount===1) return {message:"Eliminado con exito"}
+            else return {message: "No se ha encontrado o no ha podido eliminar al huesped"}
+        } catch (error) {
+            return error.message
+        }
+    },
+    async getAllHostbyUbication(ubication){
+        try {
+            return hostModel.find({hostLocation: ubication})
+        } catch (error) {
+            return error.message
+        }
     }
 })
 
