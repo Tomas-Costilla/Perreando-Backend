@@ -79,11 +79,9 @@ const hostController = ({hostService}) => ({
             res.status(500).json(error.message)
         }
     },
-    async getAllHostbyUbicationController(req,res){
-        console.log("llega")
-        console.log(req)
-        let {ubiName} = req.query
-        console.log(ubiName)
+    async getInfobyUbicationController(req,res){
+        let {ubication} = req.query
+        let ubiName = ubication ? ubication : "all"
         try {
             const result = await hostService.getAllHostbyUbication(ubiName)
             res.json(result)

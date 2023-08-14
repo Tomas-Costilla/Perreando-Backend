@@ -1,4 +1,5 @@
 const {hostModel,hostRating} = require("../../dao/db")
+const {CLOUDINARY_IMAGEURL} = require("../../config/globals")
 
 const hostService = () => ({
     async createHostService(data){
@@ -14,7 +15,27 @@ const hostService = () => ({
         return result;
     },
     async getHostInfoService(hostId){
-        return hostModel.findOne({_id: hostId})
+        try {
+            let dataDB = await hostModel.findById({_id: hostId})
+                                        .populate('hostOwnerId',{
+                                            _id:1,
+                                            userFullName:1,
+                                            userEmail:1,
+                                            userPhone:1,
+                                            userImageName:1,
+                                            userUbication:1,
+                                            userAddressStreet:1,
+                                            userAddressNumber:1,
+                                            userAddressBetwStreet:1,
+                                            userAddressExtraInfo:1
+                                        })
+
+            let returnData = {...dataDB._doc,ImageUri: `${CLOUDINARY_IMAGEURL}${dataDB._doc.hostOwnerId.userImageName}`}
+
+            return returnData
+        } catch (error) {
+            return error.message
+        }
     },
     async getHostInfobyOwnerService(ownerId){
         return hostModel.findOne({hostOwnerId: ownerId})
@@ -62,7 +83,39 @@ const hostService = () => ({
     },
     async getAllHostbyUbication(ubication){
         try {
-            return hostModel.find({hostLocation: ubication})
+            let results = []
+            if(ubication !== "all"){
+                results = await hostModel.find({hostLocation: ubication})
+                .populate('hostOwnerId',{
+                    _id:1,
+                    userFullName:1,
+                    userEmail:1,
+                    userPhone:1,
+                    userImageName:1,
+                    userUbication:1,
+                    userAddressStreet:1,
+                    userAddressNumber:1,
+                    userAddressBetwStreet:1,
+                    userAddressExtraInfo:1
+                  })
+            }else results = await hostModel.find().populate('hostOwnerId',{
+                _id:1,
+                userFullName:1,
+                userEmail:1,
+                userPhone:1,
+                userImageName:1,
+                userUbication:1,
+                userAddressStreet:1,
+                userAddressNumber:1,
+                userAddressBetwStreet:1,
+                userAddressExtraInfo:1
+              })
+            
+            const manipulateData = results.map(item => {
+                return {...item._doc,imageUri: `${CLOUDINARY_IMAGEURL}${item.hostOwnerId.userImageName}`}
+            })
+                
+            return manipulateData
         } catch (error) {
             return error.message
         }

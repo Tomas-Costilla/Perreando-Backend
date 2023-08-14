@@ -10,7 +10,7 @@ cloudinary.config({
 
 /* console.log(cloudinary.config()); */
 
-// Uploads an image file
+// Uploads an image fil
 /////////////////////////
 const uploadImage = async (imagePath) => {
 
