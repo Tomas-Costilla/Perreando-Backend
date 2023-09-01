@@ -71,9 +71,10 @@ const hostController = ({hostService}) => ({
         }
     },
     async deleteGuestFromHostController(req,res){
-        let {hostId} = req.params
+        let {hostId,userEmail} = req.params
+        /* console.log(req.body) */
         try {
-            const result = await hostService.deleteGuestFromHost(hostId,req.body.userEmail)
+            const result = await hostService.deleteGuestFromHost(hostId,userEmail)
             res.json(result)
         } catch (error) {
             res.status(500).json(error.message)
@@ -87,6 +88,15 @@ const hostController = ({hostService}) => ({
             res.json(result)
         } catch (error) {
             res.status(500).json({message: error.message})
+        }
+    },async checkIfGuestReserveController(req,res){
+        let {guestId} = req.params
+       /*  console.log(req.body) */
+        try {
+            const result = await hostService.checkIfGuestReserve(guestId)
+            res.json({message: "Resultado",existe: result})
+        } catch (error) {
+            res.status(500).json(error.message)
         }
     }
 })

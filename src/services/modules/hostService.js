@@ -69,7 +69,7 @@ const hostService = () => ({
             return error.message
         }
     },
-    async deleteGuestFromHost(hostId,guestEmail){
+    async deleteGuestFromHost(hostId,guestEmail){ 
         try {   
             const {hostGuests} = await hostModel.findById(hostId)
             const newDataWithoutGuest = hostGuests.filter(data=>data.guestId.userEmail !== guestEmail)
@@ -118,6 +118,17 @@ const hostService = () => ({
             return manipulateData
         } catch (error) {
             return error.message
+        }
+    },
+    async checkIfGuestReserve(guestId){
+        try {
+            /* let {hostGuests} = await hostModel.findById(hostId)
+            return hostGuests.some(item=>item.guestId.userEmail === userEmail)    */
+            let guestReserve = await hostModel.find({"hostGuests.guestId": guestId})
+            if(guestReserve.length) return true
+            else return false         
+        } catch (error) {
+            return error
         }
     }
 })

@@ -47,6 +47,26 @@ const userService = () =>({
         } catch (error) {
             throw new Error("No se pudo actualizar el usuario")
         }
+    },
+    async getPawUserInfo(userId){
+        try {
+            let userData = await userModel.findById(userId)
+            return {
+                userGuestAnimalName: userData.userGuestAnimalName,
+                userGuestAnimalAge: userData.userGuestAnimalAge,
+                userGuestAnimalWeight: userData.userGuestAnimalWeight
+            }
+        } catch (error) {
+            throw new Error(error.message)
+        }
+    },
+    async updateUserPaw(userId,data){
+        try {
+            let result = await userModel.findByIdAndUpdate(userId,data)
+            return "Datos actualizados"
+        } catch (error) {
+            throw new Error(error.message)
+        }
     }
 })
 

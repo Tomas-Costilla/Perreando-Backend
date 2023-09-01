@@ -62,6 +62,24 @@ const userController = ({userService}) =>({
         } catch (error) {
             res.status(500).json({error: true, message: error.message})            
         }
+    },
+    async getPawUserInfoController(req,res){
+        let {userId} = req.params
+        try {
+            const dataDB = await userService.getPawUserInfo(userId)
+            res.json(dataDB)
+        } catch (error) {
+            res.status(500).json({error: error.message})
+        }
+    },
+    async updateUserPawController(req,res){
+        let {userId} = req.params
+        try {
+            const result = await userService.updateUserPaw(userId,req.body)
+            res.json(result)
+        } catch (error) {
+            res.status(500).json({error: error.message})
+        }
     }
 })
 module.exports = userController; 

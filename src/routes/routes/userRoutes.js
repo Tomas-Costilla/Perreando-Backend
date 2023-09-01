@@ -15,6 +15,8 @@ module.exports = (router,{userController})=>{
         .get("/user/ubications",userController.userGetAllUbicationController)
         .put("/user/:userId",userController.updateUserDataController)
         .get("/user/:id",IsAuthenticated,userController.userGetInfoController)
+        .get("/user/paw/:userId",IsAuthenticated,userController.getPawUserInfoController)
+        .put("/user/paw/:userId",IsAuthenticated,userController.updateUserPawController)
       /*   .get("/user/ubis",(req,res)=>{res.json("todo ok")}) */
 
     return router;
