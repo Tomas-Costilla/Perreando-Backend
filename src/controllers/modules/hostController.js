@@ -8,10 +8,10 @@ const hostController = ({hostService}) => ({
         }
     },
     async addGuestToHost(req,res){
-        let {hostId,guestId} = req.body
+       /*  let {hostId,guestId} = req.body */
         try {
-            let result = await hostService.addGuestToHostService(hostId,guestId)
-            res.json(result)
+            let result = await hostService.addGuestToHostService(req.body)
+            res.json({message:"Se añadio el huesped al anfitrion",result})
         } catch (error) {
             res.json(error.message)
         }
@@ -71,10 +71,9 @@ const hostController = ({hostService}) => ({
         }
     },
     async deleteGuestFromHostController(req,res){
-        let {hostId,userEmail} = req.params
-        /* console.log(req.body) */
+        let {hostId,guestId} = req.params
         try {
-            const result = await hostService.deleteGuestFromHost(hostId,userEmail)
+            const result = await hostService.deleteGuestFromHost(hostId,guestId)
             res.json(result)
         } catch (error) {
             res.status(500).json(error.message)

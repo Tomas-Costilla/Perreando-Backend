@@ -23,7 +23,7 @@ const userController = ({userService}) =>({
     },
     async loginUserController(req,res){
         try {
-            let userDB = await userService.getUserbyId(req.user._id)
+            let userDB = await userService.getLoginDataService(req.user._id)
             res.json({user: userDB})
         } catch (error) {
             res.status(500).json(error.message)
@@ -65,6 +65,7 @@ const userController = ({userService}) =>({
     },
     async getPawUserInfoController(req,res){
         let {userId} = req.params
+        console.log(userId)
         try {
             const dataDB = await userService.getPawUserInfo(userId)
             res.json(dataDB)
@@ -80,6 +81,20 @@ const userController = ({userService}) =>({
         } catch (error) {
             res.status(500).json({error: error.message})
         }
+    },
+    async updatePawImage(req,res){
+        let {userId,userImageName} = req.params
+        let {path} = req.file
+        try {
+            let result = await userService.updateImagePawService(userId,userImageName,req.file)
+            res.json({newFileImageUri: result})
+        } catch (error) {
+            res.status(500).json(error.message)
+        }
+        fs.access(path,error=>{
+            if(!error) fs.unlinkSync(path)
+            else console.log("ocurrio un error al querer eliminarlo");
+        })
     }
 })
 module.exports = userController; 

@@ -13,7 +13,7 @@ module.exports = (router,{hostController}) => {
     .get("/host/check/:ownerId",IsAuthenticated,hostController.checkExistHostController)
     .get("/host/guest/:guestId",IsAuthenticated,hostController.getGuestHostController)
     .get("/host/guestReserve/:guestId",IsAuthenticated,hostController.checkIfGuestReserveController)
-    .delete("/host/guest/:hostId/:userEmail",IsAuthenticated,hostController.deleteGuestFromHostController)
+    .delete("/host/:hostId/guest/:guestId",IsAuthenticated,hostController.deleteGuestFromHostController)
 
     return router;
 }

@@ -17,6 +17,7 @@ module.exports = (router,{userController})=>{
         .get("/user/:id",IsAuthenticated,userController.userGetInfoController)
         .get("/user/paw/:userId",IsAuthenticated,userController.getPawUserInfoController)
         .put("/user/paw/:userId",IsAuthenticated,userController.updateUserPawController)
+        .put("/user/:userId/image/:userImageName/update",upload.single('userPhoto'),userController.updatePawImage)
       /*   .get("/user/ubis",(req,res)=>{res.json("todo ok")}) */
 
     return router;

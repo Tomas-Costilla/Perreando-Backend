@@ -1,7 +1,7 @@
 const {userModel} = require("../../dao/db");
 const { createHash } = require("../../utils/bcrypt");
 const {UserError} = require("../../utils/errors")
-const {uploadImage} = require("../../utils/cloudinary")
+const {uploadImage,updateImage} = require("../../utils/cloudinary")
 const {CLOUDINARY_IMAGEURL,API_GEO_URL} = require("../../config/globals")
 const axios = require("axios")
 
@@ -32,6 +32,16 @@ const userService = () =>({
             userFileUri: `${CLOUDINARY_IMAGEURL}${userDB.userImageName}.webp`
         }       
     },
+    async getLoginDataService(userId){
+        let userDB = await userModel.findById(userId)
+        return {
+            _id:userDB._id,
+            userFullName: userDB.userFullName,
+            userEmail:userDB.userEmail,
+            userProfile:userDB.userProfile,
+            userFileUri: `${CLOUDINARY_IMAGEURL}${userDB.userImageName}.webp`
+        }
+    },
     async getAllUbications(){
         try {
             let {data} = await axios.get(`${API_GEO_URL}?provincia=06&campos=id,nombre&orden=nombre&max=1000`)
@@ -52,6 +62,8 @@ const userService = () =>({
         try {
             let userData = await userModel.findById(userId)
             return {
+                userImageName: userData.userImageName,
+                userImageUrl:`${CLOUDINARY_IMAGEURL}${userData.userImageName}.webp`,
                 userGuestAnimalName: userData.userGuestAnimalName,
                 userGuestAnimalAge: userData.userGuestAnimalAge,
                 userGuestAnimalWeight: userData.userGuestAnimalWeight
@@ -66,6 +78,18 @@ const userService = () =>({
             return "Datos actualizados"
         } catch (error) {
             throw new Error(error.message)
+        }
+    },
+    async updateImagePawService(userId,oldImageName,image){
+        try {
+            await updateImage(oldImageName,image.path)
+            let result = await userModel.findByIdAndUpdate(userId,{
+                userImageName: image.filename
+            })
+            let newFileImageUri = `${CLOUDINARY_IMAGEURL}${image.filename}.webp`
+            return newFileImageUri
+        } catch (error) {
+            return error.message
         }
     }
 })

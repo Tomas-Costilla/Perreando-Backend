@@ -20,7 +20,9 @@ const hostModel = new Schema({
                 guestId:{
                     type: mongoose.Schema.Types.ObjectId,
                     ref: "user",
-                }
+                },
+                hostReserveDateFrom: Date,
+                hostReserveDateTo:Date
             }
         ]
     }

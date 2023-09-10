@@ -34,6 +34,18 @@ const uploadImage = async (imagePath) => {
     }
 };
 
+const updateImage = async (oldImageName,newImagePath) =>{
+    //delete image
+    try {
+      await cloudinary.uploader.destroy(oldImageName)
+      let result = await uploadImage(newImagePath)
+      return result
+    } catch (error) {
+      return error.message
+    }
+}
+
 module.exports = {
-    uploadImage
+    uploadImage,
+    updateImage
 }
