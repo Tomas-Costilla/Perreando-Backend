@@ -39,7 +39,8 @@ hostModel.pre('findOne',function(){
         userAddressStreet:1,
         userAddressNumber:1,
         userAddressBetwStreet:1,
-        userAddressExtraInfo:1
+        userAddressExtraInfo:1,
+        userGuestAnimalName:1
     })
     this.populate('hostGuests.guestId',{
         userFullName:1,

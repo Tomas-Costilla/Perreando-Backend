@@ -163,6 +163,24 @@ const hostService = () => ({
       return error;
     }
   },
+  async getHostGuests(hostId){
+    let hostData = await hostModel.findById({_id: hostId})
+    let newHostData = hostData.hostGuests.map(item=>{
+      let dateFrom = moment(item.hostReserveDateFrom).format("YYYY-MM-DD")
+      let dateTo = moment(item.hostReserveDateTo).format("YYYY-MM-DD")
+      return {
+        _id: item.guestId._id,
+        userFullName: item.guestId.userFullName,
+        userEmail: item.guestId.userEmail,
+        userPhone: item.guestId.userPhone,
+        userImageUri: `${CLOUDINARY_IMAGEURL}${item.guestId.userImageName}`,
+        userGuestAnimalAge: item.guestId.userGuestAnimalName,
+        hostReserveDateFrom: dateFrom,
+        hostReserveDateTo: dateTo
+      }
+    })
+    return newHostData;
+  }
 });
 
 module.exports = hostService;

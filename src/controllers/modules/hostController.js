@@ -97,6 +97,15 @@ const hostController = ({hostService}) => ({
         } catch (error) {
             res.status(500).json(error.message)
         }
+    },
+    async getHostGuestsController(req,res){
+        let {hostId} = req.params
+        try {
+            let result = await hostService.getHostGuests(hostId)
+            res.json({message: "Tus huespedes",result})
+        } catch (error) {
+            res.status(500).json({message: error.message})
+        }
     }
 })
 

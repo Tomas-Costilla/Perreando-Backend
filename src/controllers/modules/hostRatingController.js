@@ -2,7 +2,7 @@ const hostRatingController = ({hostRatingService})=>({
     async addRatingHost(req,res){
         try {
             await hostRatingService.addRatingHostService(req.body)
-            res.json("Se ha agregado la calificacion con exito")
+            res.json({message: "se ha agregado la calificacion con exito"})
         } catch (error) {
             res.json(error.message)   
         }
@@ -14,6 +14,15 @@ const hostRatingController = ({hostRatingService})=>({
             res.json(data)
         } catch (error) {
             res.json(error.message)
+        }
+    },
+    async checkGuestRatingController(req,res){
+        let {hostId,guestId} = req.params
+        try {
+            let result = await hostRatingService.checkGuestRatingService(hostId,guestId)
+            res.json({exists:result})
+        } catch (error) {
+            res.status(500).json(error.message)
         }
     }
 })

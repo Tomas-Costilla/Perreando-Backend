@@ -14,6 +14,7 @@ module.exports = (router,{hostController}) => {
     .get("/host/guest/:guestId",IsAuthenticated,hostController.getGuestHostController)
     .get("/host/guestReserve/:guestId",IsAuthenticated,hostController.checkIfGuestReserveController)
     .delete("/host/:hostId/guest/:guestId",IsAuthenticated,hostController.deleteGuestFromHostController)
+    .get("/host/guests/:hostId",IsAuthenticated,hostController.getHostGuestsController)
 
     return router;
 }
