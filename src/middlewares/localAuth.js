@@ -9,7 +9,7 @@ module.exports = (passport) => {
         usernameField:'userEmail',
         passwordField:'userPassword'
     },async (email,password,done)=>{
-        console.log(`llega ${email} ${password}`);
+        /* console.log(`llega ${email} ${password}`); */
         const userDB = await userModel.findOne({userEmail: email})
         if(!userDB) return done(null,false)
         if(!isValidPassword(userDB,password)) return done(null,false)

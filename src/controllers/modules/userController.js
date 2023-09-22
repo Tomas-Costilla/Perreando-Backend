@@ -65,7 +65,6 @@ const userController = ({userService}) =>({
     },
     async getPawUserInfoController(req,res){
         let {userId} = req.params
-        console.log(userId)
         try {
             const dataDB = await userService.getPawUserInfo(userId)
             res.json(dataDB)

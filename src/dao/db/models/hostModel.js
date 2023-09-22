@@ -14,15 +14,10 @@ const hostModel = new Schema({
     hostAnimalWeightTo:Number,
     hostAnimalAgeFrom:Number,
     hostAnimalAgeTo:Number,
-    hostGuests: {
-        type: [
+    hostImages:{
+        type:[
             {
-                guestId:{
-                    type: mongoose.Schema.Types.ObjectId,
-                    ref: "user",
-                },
-                hostReserveDateFrom: Date,
-                hostReserveDateTo:Date
+                hostImageName: String
             }
         ]
     }
@@ -42,12 +37,14 @@ hostModel.pre('findOne',function(){
         userAddressExtraInfo:1,
         userGuestAnimalName:1
     })
-    this.populate('hostGuests.guestId',{
+   /*  this.populate('hostGuests.guestId',{
         userFullName:1,
         userPhone:1,
         userImageName: 1,
         userEmail:1
-    })
+    }) */
 })
+
+
 
 module.exports = model('hosts',hostModel)

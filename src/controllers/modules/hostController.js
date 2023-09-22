@@ -1,11 +1,24 @@
+const fs = require('fs')
+
 const hostController = ({hostService}) => ({
     async createHost(req,res){
+        console.log(req.body)
         try {
-            await hostService.createHostService(req.body)
+            await hostService.createHostService(req.body,req.files)
             res.json("Host creado con exito")
         } catch (error) {
             res.json(error.message)
         }
+        /* fs.access(path,error=>{
+            if(!error) fs.unlinkSync(path)
+            else console.log("ocurrio un error al querer eliminarlo");
+        }) */
+        req.files.forEach((image,index) => {
+            fs.access(image.path,error=>{
+                if(!error) fs.unlinkSync(image.path)
+                else console.log("ocurrio un error al querer eliminarlo");
+            })
+        });
     },
     async addGuestToHost(req,res){
        /*  let {hostId,guestId} = req.body */
@@ -80,10 +93,12 @@ const hostController = ({hostService}) => ({
         }
     },
     async getInfobyUbicationController(req,res){
-        let {ubication} = req.query
-        let ubiName = ubication ? ubication : "all"
+        let {ubiName} = req.query
+       
+        let ubication = ubiName ? ubiName : "all"
+      /*   let ubiName = ubication ? ubication : "all" */
         try {
-            const result = await hostService.getAllHostbyUbication(ubiName)
+            const result = await hostService.getAllHostbyUbication(ubication)
             res.json(result)
         } catch (error) {
             res.status(500).json({message: error.message})
@@ -105,6 +120,16 @@ const hostController = ({hostService}) => ({
             res.json({message: "Tus huespedes",result})
         } catch (error) {
             res.status(500).json({message: error.message})
+        }
+    },
+    async EndBookingHostController(req,res){
+        let {hostId} = req.params
+        let {idBooking,newBookingState} = req.body
+        try {
+            let result = await hostService.EndBookingHostService(hostId,idBooking,newBookingState)
+            res.json(result)
+        } catch (error) {
+            res.status(500).json(error.message)
         }
     }
 })

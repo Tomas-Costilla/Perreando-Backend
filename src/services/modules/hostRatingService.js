@@ -23,10 +23,37 @@ const hostRatingService = () =>({
     async checkGuestRatingService(hostId,guestId){
         try {
             let result = await hostRating.findOne({hostOwnerId: hostId,hostGuestId:guestId})
-            if(result) return true
-            else return false
+            if(result) return {message: "Tu comentario",result: result._id}
+            else return {message: "Aun no has calificado este hospedaje",result: false}
         } catch (error) {
             return error.message            
+        }
+    },
+    async getRatingById(ratingId){
+        try {
+            let result = await hostRating.findById(ratingId)
+            return {message:"Tu comentario",result}
+        } catch (error) {
+            return error.message
+        }
+    },
+    async updateRating(ratingId,data){
+        try {
+            let response = await hostRating.updateOne({_id: ratingId},{
+                hostGuestRating: data.hostGuestRating,
+                hostGuestComment: data.hostGuestComment
+            })
+            return {message: "Se ha modificado con exito tu comentario",result: true}
+        } catch (error) {
+            return error.message
+        }
+    },
+    async deleteRating(ratingId){
+        try {
+            await hostRating.deleteOne({_id: ratingId})
+            return {message: "Se ha eliminado tu comentario",result: true}
+        } catch (error) {
+            return error.message
         }
     }
 })

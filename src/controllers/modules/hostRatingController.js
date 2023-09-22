@@ -20,7 +20,34 @@ const hostRatingController = ({hostRatingService})=>({
         let {hostId,guestId} = req.params
         try {
             let result = await hostRatingService.checkGuestRatingService(hostId,guestId)
-            res.json({exists:result})
+            res.json(result)
+        } catch (error) {
+            res.status(500).json(error.message)
+        }
+    },
+    async getRatingByIdController(req,res){
+        let {ratingId} = req.params
+        try {
+            let result = await hostRatingService.getRatingById(ratingId)
+            res.json(result)
+        } catch (error) {
+            res.status(500).json(error.message)
+        }
+    },
+    async updateRatingController(req,res){
+        let {ratingId} = req.params
+        try {
+            let result = await hostRatingService.updateRating(ratingId,req.body)
+            res.json(result)
+        } catch (error) {
+            res.status(500).json(error.message)
+        }
+    },
+    async deleteRatingController(req,res){
+        let {ratingId} = req.params
+        try {
+            let result = await hostRatingService.deleteRating(ratingId)
+            res.json(result)
         } catch (error) {
             res.status(500).json(error.message)
         }

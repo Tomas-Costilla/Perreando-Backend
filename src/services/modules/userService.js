@@ -39,6 +39,7 @@ const userService = () =>({
             userFullName: userDB.userFullName,
             userEmail:userDB.userEmail,
             userProfile:userDB.userProfile,
+            userUbication: userDB.userUbication,
             userFileUri: `${CLOUDINARY_IMAGEURL}${userDB.userImageName}.webp`
         }
     },

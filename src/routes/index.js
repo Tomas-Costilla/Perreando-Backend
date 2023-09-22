@@ -25,6 +25,7 @@ module.exports = (routes) =>{
         /* Api Inyection routes */
         router.use('/api',routes(router).userRoutes)
         router.use('/api',routes(router).hostRoutes)
+        router.use('/api',routes(router).bookingRoutes)
 
         /* Initial route */
         router.get('/',(req,res)=> res.status(200).json({message: "Bienvenido a la API Perreando-app"}))

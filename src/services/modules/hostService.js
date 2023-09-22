@@ -1,29 +1,60 @@
-const { hostModel, hostRating, userModel } = require("../../dao/db");
+const { hostModel, hostRating, userModel, bookingModel } = require("../../dao/db");
 const { CLOUDINARY_IMAGEURL } = require("../../config/globals");
 const { default: mongoose } = require("mongoose");
-const moment = require('moment')
-
+const moment = require("moment");
+const { uploadImage } = require("../../utils/cloudinary");
 
 const hostService = () => ({
-  async createHostService(data) {
-    return hostModel.create(data);
+  async createHostService(data,files) {
+    let arrayImageNames = files.map(item=>{
+      return {hostImageName: item.filename}
+    })
+    let objectToBD = {
+      hostOwnerId: data.hostOwnerId,
+      hostDescription: data.hostDescription,
+      hostLocation:data.hostLocation,
+      hostOwnerCapacity:data.hostOwnerCapacity,
+      hostPrice:data.hostPrice,
+      hostTypeAnimals:data.hostTypeAnimals,
+      hostAnimalWeightFrom:data.hostAnimalWeightFrom,
+      hostAnimalWeightTo:data.hostAnimalWeightTo,
+      hostAnimalAgeFrom:data.hostAnimalAgeFrom,
+      hostAnimalAgeTo:data.hostAnimalAgeTo,
+      hostImages: arrayImageNames
+    }
+    try {
+        /* uploads images */
+        for (const image of files) {
+          await uploadImage(image.path)
+        }
+        return hostModel.create(objectToBD) 
+    } catch (error) {
+      return error.message
+    }
+
   },
   async addGuestToHostService(data) {
-    let { hostId, guestId, hostReserveDateFrom, hostReserveDateTo } = data;
-    let host = await hostModel.findById({ _id: hostId });
-
-    host.hostGuests.push({
-      guestId: guestId,
+    let {
+      hostId,
+      guestId,
       hostReserveDateFrom,
       hostReserveDateTo,
-    });
+      hostReserveEstate,
+    } = data;
+    let host = await hostModel.findById({ _id: hostId });
 
+    /* console.log(host.hostGuests) */
+    let objectId = new mongoose.Types.ObjectId(guestId);
+    
+    let arrayWithUserHost = host.hostGuests.find(element=> element.guestId === guestId)
+    
     let result = await hostModel.updateOne({ _id: hostId }, host);
-    if(result.modifiedCount>0) return true
-    else return false
+    if (result.modifiedCount > 0) return true;
+    else return false;
   },
   async getHostInfoService(hostId) {
     try {
+      let totalActiveGuest = await bookingModel.countDocuments({bookingHostId: hostId,bookingState: "Reservada"})
       let dataDB = await hostModel
         .findById({ _id: hostId })
         .populate("hostOwnerId", {
@@ -42,6 +73,8 @@ const hostService = () => ({
       let returnData = {
         ...dataDB._doc,
         ImageUri: `${CLOUDINARY_IMAGEURL}${dataDB._doc.hostOwnerId.userImageName}`,
+        hostImages: dataDB._doc.hostImages.map((field,index) => { return {ImageUri: `${CLOUDINARY_IMAGEURL}${field.hostImageName}`}}),
+        totalActiveGuest: totalActiveGuest
       };
 
       return returnData;
@@ -57,8 +90,10 @@ const hostService = () => ({
   },
   async deleteHostService(hostowId) {
     try {
+      let userIdHost = await hostModel.findOne({hostOwnerId: hostowId})
+      await bookingModel.updateMany({bookingHostId: userIdHost._id},{bookingState: "Cancelado"})
+      await hostRating.findOneAndDelete({ hostOwnerId: hostowId }); 
       await hostModel.findOneAndDelete({ hostOwnerId: hostowId });
-      await hostRating.findOneAndDelete({ hostOwnerId: hostowId });
     } catch (error) {
       return error.message;
     }
@@ -74,34 +109,42 @@ const hostService = () => ({
   },
   async getGuestHostInfo(guestId) {
     try {
-      let guestDB = await userModel.findById(guestId)
+      let guestDB = await userModel.findById(guestId);
       const guestData = await hostModel.findOne({
         "hostGuests.guestId": guestId,
       });
-      if (!guestData) return {}
+      if (!guestData) return {};
 
-      let userGuestData = guestData.hostGuests.find(item=>item.guestId.userEmail === guestDB.userEmail)
-      let dateFrom = moment(userGuestData.hostReserveDateFrom).format("YYYY-MM-DD")
-      let dateTo = moment(userGuestData.hostReserveDateTo).format("YYYY-MM-DD")
+      let userGuestData = guestData.hostGuests.find(
+        (item) => item.guestId.userEmail === guestDB.userEmail
+      );
+      let dateFrom = moment(userGuestData.hostReserveDateFrom).format(
+        "YYYY-MM-DD"
+      );
+      let dateTo = moment(userGuestData.hostReserveDateTo).format("YYYY-MM-DD");
       return {
-        _id:guestData._id,
+        _id: guestData._id,
         hostOwnerId: guestData.hostOwnerId,
         hostDescription: guestData.hostDescription,
-        hostPrice:guestData.hostPrice,
+        hostPrice: guestData.hostPrice,
         hostReserveDateFrom: dateFrom,
-        hostReserveDateTo: dateTo
-      }
+        hostReserveDateTo: dateTo,
+        hostReserveEstate: userGuestData.hostReserveEstate,
+      };
     } catch (error) {
       return error.message;
     }
   },
   async deleteGuestFromHost(hostId, guestId) {
     try {
-      let objectId = new mongoose.Types.ObjectId(guestId)
-      let result = await hostModel.updateOne({_id: hostId},{
-        $pull:{"hostGuests":{"guestId": objectId }}
-      })
-      return result
+      let objectId = new mongoose.Types.ObjectId(guestId);
+      let result = await hostModel.updateOne(
+        { _id: hostId },
+        {
+          $pull: { hostGuests: { guestId: objectId } },
+        }
+      );
+      return result;
     } catch (error) {
       return error.message;
     }
@@ -138,10 +181,14 @@ const hostService = () => ({
           userAddressExtraInfo: 1,
         });
 
+      if(!results){
+        return {result: []}
+      }
       const manipulateData = results.map((item) => {
         return {
           ...item._doc,
           imageUri: `${CLOUDINARY_IMAGEURL}${item.hostOwnerId.userImageName}`,
+          hostImages: item._doc.hostImages.map((field,index) => { return {ImageUri: `${CLOUDINARY_IMAGEURL}${field.hostImageName}`}})
         };
       });
 
@@ -163,11 +210,16 @@ const hostService = () => ({
       return error;
     }
   },
-  async getHostGuests(hostId){
-    let hostData = await hostModel.findById({_id: hostId})
-    let newHostData = hostData.hostGuests.map(item=>{
-      let dateFrom = moment(item.hostReserveDateFrom).format("YYYY-MM-DD")
-      let dateTo = moment(item.hostReserveDateTo).format("YYYY-MM-DD")
+  async getHostGuests(hostId) {
+    let hostData = await hostModel.findById({ _id: hostId });
+    let guestArray = hostData.hostGuests.filter(
+      (item) =>
+        item.hostReserveEstate === "Reservado" ||
+        item.hostReserveEstate === "Finalizado"
+    );
+    let newHostData = guestArray.map((item) => {
+      let dateFrom = moment(item.hostReserveDateFrom).format("YYYY-MM-DD");
+      let dateTo = moment(item.hostReserveDateTo).format("YYYY-MM-DD");
       return {
         _id: item.guestId._id,
         userFullName: item.guestId.userFullName,
@@ -176,10 +228,36 @@ const hostService = () => ({
         userImageUri: `${CLOUDINARY_IMAGEURL}${item.guestId.userImageName}`,
         userGuestAnimalAge: item.guestId.userGuestAnimalName,
         hostReserveDateFrom: dateFrom,
-        hostReserveDateTo: dateTo
-      }
-    })
+        hostReserveDateTo: dateTo,
+        hostReserveEstate: item.hostReserveEstate,
+      };
+    });
     return newHostData;
+  },
+  async EndBookingHostService(idHost, documentID, newState) {
+    /* console.log(`${idHost} ${documentID} ${newState}`) */
+    try {
+      let response = await hostModel.updateOne(
+        { _id: idHost, "hostGuests._id": documentID },
+        {
+          $set: { "hostGuests.$.hostReserveEstate": newState },
+        }
+      );
+      return {
+        response,
+        message: "Tu reserva se ha finalizado correctamente",
+      };
+    } catch (error) {
+      return error.message;
+    }
+  },
+  async getCountOfGuestByHost(hostId){
+    try {
+      let totalGuest = await bookingModel.countDocuments({bookingHostId: hostId})
+      return totalGuest
+    } catch (error) {
+      return error.message
+    }
   }
 });
 
