@@ -94,6 +94,32 @@ const userController = ({userService}) =>({
             if(!error) fs.unlinkSync(path)
             else console.log("ocurrio un error al querer eliminarlo");
         })
+    },
+    async sendEmailToResetPasswordController(req,res){
+        let {userEmail} = req.body
+        try {
+            let result = await userService.sendEmailToResetPasswordService(userEmail)
+            res.json(result)
+        } catch (error) {
+            res.status(500).json(error)
+        }
+    },
+    async validateCodeResetPasswordController(req,res){
+        let {userEmail} = req.params
+        try {
+            let result = await userService.validateCodeResetPassword(userEmail)
+            res.json(result)
+        } catch (error) {
+            res.status(500).json(error.message)
+        }
+    },
+    async changeUserPasswordController(req,res){
+        try {
+            let result = await userService.changeUserPasswordService(req.body)
+            res.json(result)
+        } catch (error) {
+            res.status(500).json(error.message)            
+        }
     }
 })
 module.exports = userController; 

@@ -8,6 +8,9 @@ const upload = multer({dest: 'uploads/'})
 module.exports = (router,{userController})=>{
     router
         .get("/user",userController.firstUserRoute)
+        .post("/user/resetpassword",userController.sendEmailToResetPasswordController)
+        .get("/user/validatetokenpassword",userController.validateCodeResetPasswordController)
+        .put("/user/changeuserpassword",userController.changeUserPasswordController)
         .post("/user",upload.single('userPhoto'),userController.createUserController)
         .post("/user/signin",passport.authenticate('login',{failureRedirect:"/user/accessdenied"}),userController.loginUserController)
         .get("/user/accessdenied",userController.userLoginAccess)
