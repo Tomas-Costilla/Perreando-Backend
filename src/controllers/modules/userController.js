@@ -101,13 +101,14 @@ const userController = ({userService}) =>({
             let result = await userService.sendEmailToResetPasswordService(userEmail)
             res.json(result)
         } catch (error) {
-            res.status(500).json(error)
+            /* console.log(error) */
+            res.status(500).json(error.message)
         }
     },
     async validateCodeResetPasswordController(req,res){
-        let {userEmail} = req.params
+        let {userEmail,userCode} = req.params
         try {
-            let result = await userService.validateCodeResetPassword(userEmail)
+            let result = await userService.validateCodeUser(userEmail,userCode)
             res.json(result)
         } catch (error) {
             res.status(500).json(error.message)

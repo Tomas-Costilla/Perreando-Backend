@@ -115,7 +115,7 @@ const userService = () =>({
 
           try {
                 let userDB = await userModel.findOne({userEmail: email})
-                if(!userDB) return {message:"Este email no se encuentra registrado",result: false}
+                if(!userDB) throw new Error("Este email no se encuentra registrado")
                 if(await this.checkIfCodePasswordResetExist(email)){
                     await this.deleteCodePasswordReset(email)
                 }
@@ -123,7 +123,8 @@ const userService = () =>({
                 await transporter.sendMail(mailOptions)
                 return {message:"Se realizo el envio del mail",result: true}
           } catch (error) {
-                return error.message
+                throw new Error(error.message)
+                /* return error.message */
           }
     },
     async checkIfCodePasswordResetExist(userEmail){
@@ -155,7 +156,9 @@ const userService = () =>({
             if(await this.checkIfCodePasswordResetExist(userEmail)){
                 await this.deleteCodePasswordReset(userEmail)
                 return {message: "Codigo validado con exito",result: true}
-            }else return {message: "Tu codigo de validacion expiró o no existe",result: false}
+            }
+            
+            throw new Error("Tu codigo de validacion expiró o no existe")
         } catch (error) {
             return error.message
         }
@@ -168,6 +171,18 @@ const userService = () =>({
             return {message: "Contraseña actualizada con exito",result: true}
         } catch (error) {
             return error.message
+        }
+    },
+    async validateCodeUser(userEmail,userCode){
+        try {
+            let result = await tokenModel.findOne({tokenUserEmail: userEmail,tokenNumberCode: userCode})
+            if(result) {
+                this.deleteCodePasswordReset(userEmail)
+                return {message: "Validado con exito",result: true}
+            }
+            throw new Error("El codigo de validacion es incorrecto")
+        } catch (error) {
+            throw new Error(error.message)            
         }
     }
 })
