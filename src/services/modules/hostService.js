@@ -184,13 +184,25 @@ const hostService = () => ({
       if(!results){
         return {result: []}
       }
-      const manipulateData = results.map((item) => {
-        return {
-          ...item._doc,
-          imageUri: `${CLOUDINARY_IMAGEURL}${item.hostOwnerId.userImageName}`,
-          hostImages: item._doc.hostImages.map((field,index) => { return {ImageUri: `${CLOUDINARY_IMAGEURL}${field.hostImageName}`}})
-        };
-      });
+
+      let manipulateData = []
+      for(const item of results){
+        /* console.log(item._doc._id) */
+          let activeGuests = await bookingModel.find({bookingHostId: item._doc._id,bookingState:"Reservada"})
+          let ratings = await hostRating.find({hostOwnerId: item._doc._id})
+          /* console.log(ratings) */
+          let averageRating = 0
+          if(ratings.length) averageRating = ratings.reduce((acc,val) => acc + val.hostGuestRating,0) / ratings.length
+          
+
+          manipulateData.push({
+            ...item._doc,
+            imageUri: `${CLOUDINARY_IMAGEURL}${item.hostOwnerId.userImageName}`,
+            hostImages: item._doc.hostImages.map((field,index) => { return {ImageUri: `${CLOUDINARY_IMAGEURL}${field.hostImageName}`}}),
+            averageRating: averageRating,
+            activeGuests: activeGuests.length
+          }) 
+      }
 
       return manipulateData;
     } catch (error) {
