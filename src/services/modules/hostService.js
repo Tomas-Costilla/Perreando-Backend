@@ -2,7 +2,7 @@ const { hostModel, hostRating, userModel, bookingModel } = require("../../dao/db
 const { CLOUDINARY_IMAGEURL } = require("../../config/globals");
 const { default: mongoose } = require("mongoose");
 const moment = require("moment");
-const { uploadImage } = require("../../utils/cloudinary");
+const { uploadImage, deleteImage } = require("../../utils/cloudinary");
 
 const hostService = () => ({
   async createHostService(data,files) {
@@ -83,7 +83,9 @@ const hostService = () => ({
     }
   },
   async getHostInfobyOwnerService(ownerId) {
-    return hostModel.findOne({ hostOwnerId: ownerId });
+    let dataRetorned = await hostModel.findOne({ hostOwnerId: ownerId });
+    let newDataToReturn = {...dataRetorned._doc,hostImages: dataRetorned.hostImages.map(item => {return {ImageName: item.hostImageName,ImageUri: `${CLOUDINARY_IMAGEURL}${item.hostImageName}`}} )}
+    return newDataToReturn;
   },
   async updateHostService(id, data) {
     return hostModel.findByIdAndUpdate(id, data);
@@ -270,6 +272,14 @@ const hostService = () => ({
     } catch (error) {
       return error.message
     }
+  },
+  async deleteHostImage(hostId,imageName){
+    /* console.log(`${hostId} ${imageName}`); */
+      await deleteImage(imageName)
+      await hostModel.findByIdAndUpdate(hostId,{$pull:{hostImages: {hostImageName: imageName}}})
+      let dataDB = await hostModel.findById(hostId)
+      let newImages = dataDB.hostImages.map(item => {return {ImageName: item.hostImageName,ImageUri: `${CLOUDINARY_IMAGEURL}${item.hostImageName}`}} )
+      return newImages
   }
 });
 

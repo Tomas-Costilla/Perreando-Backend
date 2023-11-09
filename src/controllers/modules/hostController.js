@@ -131,6 +131,15 @@ const hostController = ({hostService}) => ({
         } catch (error) {
             res.status(500).json(error.message)
         }
+    },
+    async deleteHostImageController(req,res){
+        let {hostId,imageName} = req.params
+        try {
+            let result = await hostService.deleteHostImage(hostId,imageName)
+            res.json(result)
+        } catch (error) {
+            res.status(500).json(error.message)
+        }
     }
 })
 

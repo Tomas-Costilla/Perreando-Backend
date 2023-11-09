@@ -17,6 +17,7 @@ module.exports = (router,{hostController}) => {
     .delete("/host/:hostId/guest/:guestId",IsAuthenticated,hostController.deleteGuestFromHostController)
     .get("/host/guests/:hostId",IsAuthenticated,hostController.getHostGuestsController)
     .put("/host/guest/endbooking/:hostId",IsAuthenticated,hostController.EndBookingHostController)
+    .delete("/host/:hostId/image/:imageName",IsAuthenticated,hostController.deleteHostImageController)
 
     return router;
 }
