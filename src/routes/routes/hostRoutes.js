@@ -18,6 +18,7 @@ module.exports = (router,{hostController}) => {
     .get("/host/guests/:hostId",IsAuthenticated,hostController.getHostGuestsController)
     .put("/host/guest/endbooking/:hostId",IsAuthenticated,hostController.EndBookingHostController)
     .delete("/host/:hostId/image/:imageName",IsAuthenticated,hostController.deleteHostImageController)
+    .post("/host/:hostId/updateimage",[IsAuthenticated,upload.single('uploadImage')],hostController.addImageHostController)
 
     return router;
 }

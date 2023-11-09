@@ -280,6 +280,14 @@ const hostService = () => ({
       let dataDB = await hostModel.findById(hostId)
       let newImages = dataDB.hostImages.map(item => {return {ImageName: item.hostImageName,ImageUri: `${CLOUDINARY_IMAGEURL}${item.hostImageName}`}} )
       return newImages
+  },
+  async addImageHost(hostId,image){
+    /* console.log(image) */
+    await uploadImage(image.path)
+    await hostModel.findByIdAndUpdate(hostId,{$push:{hostImages: {hostImageName: image.filename}}})
+    let dataDB = await hostModel.findById(hostId)
+    let newImages = dataDB.hostImages.map(item => {return {ImageName: item.hostImageName,ImageUri: `${CLOUDINARY_IMAGEURL}${item.hostImageName}`}} )
+    return newImages
   }
 });
 

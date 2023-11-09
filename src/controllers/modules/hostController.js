@@ -140,6 +140,21 @@ const hostController = ({hostService}) => ({
         } catch (error) {
             res.status(500).json(error.message)
         }
+    },
+    async addImageHostController(req,res){
+        let {hostId} = req.params
+        let {path} = req.file
+        try {
+            let result = await hostService.addImageHost(hostId,req.file)
+            res.json(result)
+        } catch (error) {
+            res.status(500).json(error.message)
+        }
+
+        fs.access(path,error=>{
+            if(!error) fs.unlinkSync(path)
+            else console.log("ocurrio un error al querer eliminarlo");
+        })
     }
 })
 
