@@ -44,7 +44,7 @@ const hostController = ({hostService}) => ({
             let data = await hostService.getHostInfobyOwnerService(id)
             res.json(data)
         } catch (error) {
-            res.json(error.message)
+            res.status(500).json(error.message)
         }
     },
     async updateHost(req,res){

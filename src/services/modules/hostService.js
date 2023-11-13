@@ -84,6 +84,7 @@ const hostService = () => ({
   },
   async getHostInfobyOwnerService(ownerId) {
     let dataRetorned = await hostModel.findOne({ hostOwnerId: ownerId });
+    if(!dataRetorned) return {}
     let newDataToReturn = {...dataRetorned._doc,hostImages: dataRetorned.hostImages.map(item => {return {ImageName: item.hostImageName,ImageUri: `${CLOUDINARY_IMAGEURL}${item.hostImageName}`}} )}
     return newDataToReturn;
   },
