@@ -1,4 +1,9 @@
 const {Schema,model, default: mongoose} = require('mongoose')
+const moment = require("moment")
+const momenttz = require('moment-timezone')
+let dateNow = Date.now()
+let dateArgetina = momenttz.tz("America/Argentina/Buenos_Aires")
+
 
 const bookingModel = new Schema({
     bookingHostId:{
@@ -12,7 +17,7 @@ const bookingModel = new Schema({
     bookingDateStart:Date,
     bookingDateEnd:Date,
     bookingState:String,
-    bookingCreatedAt: {type: Date,default: Date.now}
+    bookingCreatedAt: {type: Date,default: dateArgetina}
 })
 
 module.exports = model('booking',bookingModel)

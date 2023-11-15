@@ -72,15 +72,25 @@ const bookingService = () => ({
           hostPrice: 1,
           hostOwnerId: 1,
         });
+
+      /*   console.log(dataDb); */
+
       let newDataDb = dataDb.map((item) => {
+       /*  console.log(item); */
+    /*   let day = item.bookingDateStart.getDate()+1
+      console.log(day);  */
+
+     /*  let dateStart = moment(item._doc.bookingDateStart).add(1,'days').format("YYYY-MM-DD") */
+     /* console.log(moment(item._doc.bookingDateStart).add(1,'days').format("YYYY-MM-DD")); */
+
         return {
-          _id: item._id,
-          bookingHostId: item.bookingHostId,
-          bookingGuestId: item.bookingGuestId,
-          bookingDateStart: moment(item.bookingDateStart).format("YYYY-MM-DD"),
-          bookingDateEnd: moment(item.bookingDateEnd).format("YYYY-MM-DD"),
-          bookingState: item.bookingState,
-          bookingCreatedAt: moment(item.bookingCreatedAt).format("YYYY-MM-DD")
+          _id: item._doc._id,
+          bookingHostId: item._doc.bookingHostId,
+          bookingGuestId: item._doc.bookingGuestId,
+          bookingDateStart: moment(item._doc.bookingDateStart).add(1,'days').format("YYYY-MM-DD"),
+          bookingDateEnd: moment(item._doc.bookingDateEnd).add(1,'days').format("YYYY-MM-DD"),
+          bookingState: item._doc.bookingState,
+          bookingCreatedAt: moment(item._doc.bookingCreatedAt).format("YYYY-MM-DD")
         };
       });
       return { message: "Tus reservas", result: newDataDb };
