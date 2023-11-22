@@ -45,12 +45,11 @@ const userService = () =>({
         }
     },
     async getAllUbications(){
-        try {
-            let {data} = await axios.get(`${API_GEO_URL}?provincia=06&campos=id,nombre&orden=nombre&max=1000`)
-            return data.localidades
-        } catch (error) {
-            return error.message
-        }
+        //let {data} = await axios.get(`${API_GEO_URL}?provincia=06&campos=id,nombre&orden=nombre&max=1000`)
+        const response = await fetch(`${API_GEO_URL}?provincia=06&campos=id,nombre&orden=nombre&max=1000`)
+        const localidades = await response.json()
+
+        return localidades.localidades
     },
     async updateUserDate(userId,userData){
         try {
