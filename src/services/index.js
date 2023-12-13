@@ -6,7 +6,7 @@ const repositories = require("../repository")
 
 module.exports = {
     userService: userService(repositories),
-    hostService: hostService(),
-    hostRatingService: hostRatingService(),
-    bookingService: bookingService()
+    hostService: hostService(repositories),
+    hostRatingService: hostRatingService(repositories),
+    bookingService: bookingService(repositories)
 }

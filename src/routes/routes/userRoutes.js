@@ -7,21 +7,20 @@ const upload = multer({dest: 'uploads/'})
 
 module.exports = (router,{userController})=>{
     router
-        .get("/user",userController.firstUserRoute)
-        .post("/user/resetpassword",userController.sendEmailToResetPasswordController)
-        .get("/user/validatetokenpassword/:userEmail/:userCode",userController.validateCodeResetPasswordController)
-        .put("/user/changeuserpassword",userController.changeUserPasswordController)
-        .post("/user",upload.single('userPhoto'),userController.createUserController)
-        .post("/user/signin",passport.authenticate('login',{failureRedirect:"/user/accessdenied"}),userController.loginUserController)
-        .get("/user/accessdenied",userController.userLoginAccess)
-        .post("/user/signup",userController.userSignUpController)
-        .get("/user/ubications",userController.userGetAllUbicationController)
-        .put("/user/:userId",userController.updateUserDataController)
-        .get("/user/:id",IsAuthenticated,userController.userGetInfoController)
-        .get("/user/paw/:userId",IsAuthenticated,userController.getPawUserInfoController)
-        .put("/user/paw/:userId",IsAuthenticated,userController.updateUserPawController)
-        .put("/user/:userId/image/:userImageName/update",upload.single('userPhoto'),userController.updatePawImage)
-      /*   .get("/user/ubis",(req,res)=>{res.json("todo ok")}) */
+        .get("/",userController.firstUserRoute)
+        .post("/resetpassword",userController.sendEmailToResetPasswordController)
+        .get("/validatetokenpassword/:userEmail/:userCode",userController.validateCodeResetPasswordController)
+        .put("/changeuserpassword",userController.changeUserPasswordController)
+        .post("/",upload.single('userPhoto'),userController.createUserController)
+        .post("/signin",passport.authenticate('login',{failureRedirect:"/accessdenied"}),userController.loginUserController)
+        .get("/accessdenied",userController.userErrorLogin)
+        .post("/signup",userController.userSignUpController)
+        .get("/ubications",userController.userGetAllUbicationController)
+        .put("/:userId",IsAuthenticated,userController.updateUserDataController)
+        .get("/:id",IsAuthenticated,userController.userGetInfoController)
+        .get("/paw/:userId",IsAuthenticated,userController.getPawUserInfoController)
+        .put("/paw/:userId",IsAuthenticated,userController.updateUserPawController)
+        .put("/:userId/image/:userImageName/update",[IsAuthenticated,upload.single('userPhoto')],userController.updatePawImage)
 
     return router;
 }

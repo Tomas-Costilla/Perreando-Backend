@@ -1,4 +1,4 @@
-const fs = require("fs")
+const deleteUploadFile = require("../../utils/deleteFile")
 
 const userController = ({userService}) =>({
     firstUserRoute(req,res){
@@ -6,42 +6,36 @@ const userController = ({userService}) =>({
     },
     async createUserController(req,res){
         let {path} = req.file
-      /*   console.log(req.body); */
         try {
             await userService.createUser(req.body,req.file)
-            res.status(200).json("Usuario creado con exito")
+            res.status(200).json({message: "Usuario creado con exito"})
         } catch (error) {
-            res.status(500).json(error.message)
+            res.status(500).json({message: error.message})
         }
         /* delete image from server after upload */
-        /* let filePath = `uploads/${filename}` */
-        fs.access(path,error=>{
-            if(!error) fs.unlinkSync(path)
-            else console.log("ocurrio un error al querer eliminarlo");
-        })
-
+        deleteUploadFile(path)
     },
     async loginUserController(req,res){
         try {
             let userDB = await userService.getLoginDataService(req.user._id)
             res.json({user: userDB})
         } catch (error) {
-            res.status(500).json(error.message)
+            res.status(500).json({message: error.message})
         }
     },
-    userLoginAccess(req,res){
-        res.status(500).json("La contraseña es invalida o el usuario no existe")
+    userErrorLogin(req,res){
+        res.status(500).json({message: "La contraseña es invalida o el usuario no existe"})
     },
     userSignUpController(req,res){
         req.logout(()=> {
-            res.status(200).json("Usuario deslogueado correctamente")
+            res.status(200).json({message: "Usuario deslogueado con exito"})
         })
     },
     async userGetInfoController(req,res){
         let {id} = req.params
         try {
             let result = await userService.getUserbyId(id)
-            res.status(200).json(result)
+            res.status(200).json({message: "Informacion del usuario",result})
         } catch (error) {
             res.status(500).json({
                 message: error.message
@@ -60,7 +54,7 @@ const userController = ({userService}) =>({
         let {userId} = req.params
         try {
             const result = await userService.updateUserDate(userId,req.body)
-            res.json(result)
+            res.json({message:"Se ha actualizado con exito",result})
         } catch (error) {
             res.status(500).json({error: true, message: error.message})            
         }
@@ -69,18 +63,18 @@ const userController = ({userService}) =>({
         let {userId} = req.params
         try {
             const dataDB = await userService.getPawUserInfo(userId)
-            res.json(dataDB)
+            res.json({message:"Informacion de la mascota",dataDB})
         } catch (error) {
-            res.status(500).json({error: error.message})
+            res.status(500).json({message: error.message})
         }
     },
     async updateUserPawController(req,res){
         let {userId} = req.params
         try {
             const result = await userService.updateUserPaw(userId,req.body)
-            res.json(result)
+            res.json({message:"Se ha actualizado los datos de tu mascota",result})
         } catch (error) {
-            res.status(500).json({error: error.message})
+            res.status(500).json({message: error.message})
         }
     },
     async updatePawImage(req,res){
@@ -88,40 +82,36 @@ const userController = ({userService}) =>({
         let {path} = req.file
         try {
             let result = await userService.updateImagePawService(userId,userImageName,req.file)
-            res.json({newFileImageUri: result})
+            res.json({message:"Imagen actualizada",newFileImageUri: result})
         } catch (error) {
-            res.status(500).json(error.message)
+            res.status(500).json({message:error.message})
         }
-        fs.access(path,error=>{
-            if(!error) fs.unlinkSync(path)
-            else console.log("ocurrio un error al querer eliminarlo");
-        })
+        deleteUploadFile(path)
     },
     async sendEmailToResetPasswordController(req,res){
         let {userEmail} = req.body
         try {
             let result = await userService.sendEmailToResetPasswordService(userEmail)
-            res.json(result)
+            res.json({message:"Se envio con exito el correo",result})
         } catch (error) {
-            /* console.log(error) */
-            res.status(500).json(error.message)
+            res.status(500).json({message: error.message})
         }
     },
     async validateCodeResetPasswordController(req,res){
         let {userEmail,userCode} = req.params
         try {
             let result = await userService.validateCodeUser(userEmail,userCode)
-            res.json(result)
+            res.json({message:"Se ha validado con exito tu codigo",result})
         } catch (error) {
-            res.status(500).json(error.message)
+            res.status(500).json({message:error.message})
         }
     },
     async changeUserPasswordController(req,res){
         try {
             let result = await userService.changeUserPasswordService(req.body)
-            res.json(result)
+            res.json({message:"Se ha modificado con exito tu contraseña",result})
         } catch (error) {
-            res.status(500).json(error.message)            
+            res.status(500).json({message: error.message})            
         }
     }
 })

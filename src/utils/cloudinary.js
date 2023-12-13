@@ -13,9 +13,6 @@ cloudinary.config({
 // Uploads an image fil
 /////////////////////////
 const uploadImage = async (imagePath) => {
-
-   /*  console.log(imagePath); */
-
     // Use the uploaded file's name as the asset's public ID and 
     // allow overwriting the asset with new versions
     const options = {
@@ -23,34 +20,20 @@ const uploadImage = async (imagePath) => {
       unique_filename: false,
       overwrite: true,
     };
-
-    try {
-      // Upload the image
       const result = await cloudinary.uploader.upload(imagePath, options);
-      console.log(result);
       return result.public_id;
-    } catch (error) {
-      console.error(error);
-    }
+
 };
 
 const updateImage = async (oldImageName,newImagePath) =>{
     //delete image
-    try {
       await cloudinary.uploader.destroy(oldImageName)
       let result = await uploadImage(newImagePath)
       return result
-    } catch (error) {
-      return error.message
-    }
 }
 
 const deleteImage = async(imageName) => {
-  try {
-    await cloudinary.uploader.destroy(imageName)    
-  } catch (error) {
-    return error
-  }
+    return cloudinary.uploader.destroy(imageName)    
 }
 
 module.exports = {

@@ -9,11 +9,11 @@ const userRepository = () =>({
     async createUser(userData,userImage){
         let newUserObject = {...userData,userImageName: userImage.filename}
     
-        let userDB = await userModel.findOne({userEmail: newObject.userEmail})
+        let userDB = await userModel.findOne({userEmail: newUserObject.userEmail})
 
         if(userDB) throw new Error("El usuario ya esta registrado")
 
-        let newPassword = createHash(newObject.userPassword)
+        let newPassword = createHash(newUserObject.userPassword)
 
         newUserObject.userPassword = newPassword
 
@@ -23,7 +23,6 @@ const userRepository = () =>({
         return baseRepository.createData(userModel,newUserObject)
     },
     async getUserById(userId){
-        console.log(userId)
         let userDB = await userModel.findById({_id: userId})
         if(!userDB) throw new Error("el usuario no existe")
         return {
@@ -45,7 +44,6 @@ const userRepository = () =>({
     async getAllTowns(){
         const response = await fetch(`${API_GEO_URL}?provincia=06&campos=id,nombre&orden=nombre&max=1000`)
         const data = await response.json()
-
         return data.localidades
     },
     async updateUserData(userId,userData){
@@ -94,27 +92,19 @@ const userRepository = () =>({
         let IsTokenExist = await tokenModel.findOne({tokenUserEmail: useremail})
         if(IsTokenExist) await tokenModel.deleteOne({tokenUserEmail: useremail})
         await tokenModel.create({tokenUserEmail: useremail,tokenNumberCode:randomCode})
-        await transporter.sendMail(mailBody)
-        return {message: "Se ha enviado el mail para recupero de contraseña correctamente",result:true}
+        return transporter.sendMail(mailBody)
     },
     async validateTokenPasswordReset(userEmail){
         let IsTokenExist = await tokenModel.findOne({tokenUserEmail: userEmail})
         if(IsTokenExist){
-            await tokenModel.deleteOne({tokenUserEmail: userEmail})
-            return {message: "Codigo validado con exito",result: true}
+            return tokenModel.deleteOne({tokenUserEmail: userEmail})
         }
         throw new Error("Tu codigo de validacion expiró o no existe")
     },
     async updateUserPassword(userData){
         let {userEmail,userNewPassword} = userData
-        /* let {userEmail,userNewPassword} = userData
-        try {
-            let newPassword = createHash(userNewPassword)
-            await userModel.updateOne({userEmail: userEmail},{userPassword: newPassword})
-            return {message: "Contraseña actualizada con exito",result: true}
-        } catch (error) {
-            return error.message
-        } */
+        let newPassword = createHash(userNewPassword)
+        return userModel.updateOne({userEmail: userEmail},{userPassword: newPassword})
     }
 })
 
