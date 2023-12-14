@@ -12,17 +12,7 @@ const userModel = new Schema({
     userAddressBetwStreet:String,
     userAddressExtraInfo:String,
     userProfile:String,
-    userGuestAnimalName:String,
-    userGuestAnimalAge:Number,
-    userGuestAnimalWeight:Number,
-    userGuestAnimalAge:Number,
-    userGuestAnimalWeight:Number,
-    userHostType:String,
-    userHostCapacity:Number,
-    userHostAnimalWeightFrom:Number,
-    userHostAnimalWeightTo:Number,
-    userHostAnimalAgeFrom:Number,
-    userHostAnimalAgeTo:Number
+    userFirstLogin:Boolean,
+    userTermsAccept:Boolean
 })
-
 module.exports = model('user',userModel)

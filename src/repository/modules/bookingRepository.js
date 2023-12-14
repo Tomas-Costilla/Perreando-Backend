@@ -1,7 +1,8 @@
 const baseRepository = require("../baseRepository")
-const {bookingModel, hostModel} = require("../../dao/db")
+const {bookingModel, hostModel, userModel} = require("../../dao/db")
 const {CLOUDINARY_IMAGEURL} = require("../../config/globals")
 const moment = require("moment");
+const sendEmail = require("../../utils/email");
 
 
 const bookingRepository = () =>({
@@ -9,10 +10,10 @@ const bookingRepository = () =>({
         let bookingDateFrom = new Date(data.bookingDateStart);
         let bookingDateTo = new Date(data.bookingDateEnd);
 
-          let {hostOwnerCapacity} = await hostModel.findOne({_id: data.bookingHostId})
+          let hostData = await hostModel.findOne({_id: data.bookingHostId})
           let totalGuestHost = await bookingModel.countDocuments({bookingHostId: data.bookingHostId,bookingState: "Reservada"})
           
-          if(hostOwnerCapacity === totalGuestHost) throw new Error("La capacidad del anfitrion esta completa")
+          if(hostData.hostOwnerCapacity === totalGuestHost) throw new Error("La capacidad del anfitrion esta completa")
 
           let bookingPrevData = await bookingModel.findOne({
             bookingGuestId: data.bookingGuestId,
@@ -22,7 +23,16 @@ const bookingRepository = () =>({
           });
           if (bookingPrevData) throw new Error("Ya tienes una reserva en las mismas fechas!")
           
-          return baseRepository.createData(bookingModel,data)
+          await baseRepository.createData(bookingModel,data)
+
+          let {userEmail,userFullName} = hostData.hostOwnerId
+          let guestData = await userModel.findById({_id: data.bookingGuestId})
+
+          /* send mail confirm reserve to host */
+          await sendEmail({addressee: userEmail,subjectEmail: "Reserva confirmada",textEmail:`${guestData.userFullName} ha realizado una reserva en tu hospedaje!`})
+
+          /*send mail confirm reserve to guest*/
+          return sendEmail({addressee: guestData.userEmail,subjectEmail: "Reserva confirmada",textEmail:`Has confirmado tu reserva en el hospedaje de ${userFullName}`})
 
       },
       async getAllBookingHostRepository(hostId) {

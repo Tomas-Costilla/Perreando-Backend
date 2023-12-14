@@ -23,10 +23,11 @@ module.exports = (routes) =>{
         .use(passport.session())
 
         /* Api Inyection routes */
-        router.use('/api/user',routes(router).userRoutes)
-        router.use('/api/host',routes(router).hostRoutes)
-        router.use('/api/booking',routes(router).bookingRoutes)
-        router.use('/api/rating',routes(router).hostRatingRoutes)
+        router.use('/api',routes(router).userRoutes)
+        router.use('/api',routes(router).hostRoutes)
+        router.use('/api',routes(router).bookingRoutes)
+        router.use('/api',routes(router).hostRatingRoutes)
+        router.use('/api',routes(router).petRoutes)
 
         /* Initial route */
         router.get('/',(req,res)=> res.status(200).json({message: "Bienvenido a la API Perreando-app"}))
