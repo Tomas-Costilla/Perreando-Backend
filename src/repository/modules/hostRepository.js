@@ -17,16 +17,7 @@ const hostRepository = () => ({
     });
 
     let objectToBD = {
-      hostOwnerId: data.hostOwnerId,
-      hostDescription: data.hostDescription,
-      hostLocation: data.hostLocation,
-      hostOwnerCapacity: data.hostOwnerCapacity,
-      hostPrice: data.hostPrice,
-      hostTypeAnimals: data.hostTypeAnimals,
-      hostAnimalWeightFrom: data.hostAnimalWeightFrom,
-      hostAnimalWeightTo: data.hostAnimalWeightTo,
-      hostAnimalAgeFrom: data.hostAnimalAgeFrom,
-      hostAnimalAgeTo: data.hostAnimalAgeTo,
+      ...data,
       hostImages: arrayImageNames,
     };
 
@@ -56,12 +47,7 @@ const hostRepository = () => ({
         userFullName: 1,
         userEmail: 1,
         userPhone: 1,
-        userImageName: 1,
-        userUbication: 1,
-        userAddressStreet: 1,
-        userAddressNumber: 1,
-        userAddressBetwStreet: 1,
-        userAddressExtraInfo: 1,
+        userImageName: 1
       });
 
     let returnData = {

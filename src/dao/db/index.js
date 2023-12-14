@@ -4,6 +4,7 @@ const hostRating = require("./models/hostRating")
 const bookingModel = require("./models/bookingModel")
 const tokenModel = require('./models/tokenModel')
 const petModel = require('./models/petModel')
+const countryModel = require('./models/countryModel')
 
 module.exports = {
     userModel,
@@ -11,5 +12,6 @@ module.exports = {
     hostRating,
     bookingModel,
     tokenModel,
-    petModel
+    petModel,
+    countryModel
 }

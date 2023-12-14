@@ -1,12 +1,15 @@
 const {Schema,model, default: mongoose} = require("mongoose")
 
 const hostModel = new Schema({
+    hostCountryId:{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:"countries"
+    },
     hostOwnerId: {
         type: mongoose.Schema.Types.ObjectId,
         ref:"user"
     },
     hostDescription:String,
-    hostLocation:String,
     hostOwnerCapacity:Number,
     hostPrice:Number,
     hostTypeAnimals:String,
@@ -14,6 +17,9 @@ const hostModel = new Schema({
     hostAnimalWeightTo:Number,
     hostAnimalAgeFrom:Number,
     hostAnimalAgeTo:Number,
+    hostState:String,
+    hostCity:String,
+    hostCompleteAddress:String,
     hostImages:{
         type:[
             {
@@ -29,13 +35,13 @@ hostModel.pre('findOne',function(){
         userEmail:1,
         userImageName: 1,
         userEmail:1,
-        userPhone:1,
-        userUbication:1,
+        userPhone:1
+        /* userUbication:1,
         userAddressStreet:1,
         userAddressNumber:1,
         userAddressBetwStreet:1,
         userAddressExtraInfo:1,
-        userGuestAnimalName:1
+        userGuestAnimalName:1 */
     })
    /*  this.populate('hostGuests.guestId',{
         userFullName:1,

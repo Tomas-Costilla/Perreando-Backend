@@ -4,11 +4,13 @@ const hostController = require("./modules/hostController")
 const hostRatingController = require("./modules/hostRatingController")
 const bookingController = require("./modules/bookingController")
 const petController = require("./modules/petController")
+const countryController = require("./modules/countryController")
 
 module.exports = {
     userController: userController(services),
     hostController: hostController(services),
     hostRatingController: hostRatingController(services),
     bookingController: bookingController(services),
-    petController: petController(services)    
+    petController: petController(services),
+    countryController: countryController(services)    
 }

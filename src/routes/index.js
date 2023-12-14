@@ -28,6 +28,7 @@ module.exports = (routes) =>{
         router.use('/api',routes(router).bookingRoutes)
         router.use('/api',routes(router).hostRatingRoutes)
         router.use('/api',routes(router).petRoutes)
+        router.use('/api',routes(router).countryRoutes)
 
         /* Initial route */
         router.get('/',(req,res)=> res.status(200).json({message: "Bienvenido a la API Perreando-app"}))
