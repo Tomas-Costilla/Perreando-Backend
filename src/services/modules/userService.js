@@ -28,11 +28,14 @@ const userService = ({userRepository}) =>({
     async sendEmailToResetPasswordService(email){
         return userRepository.sendEmailToResetPassword(email)
     },
-    async validateCodeResetPassword(userEmail){
-        return userRepository.validateTokenPasswordReset(userEmail)
+    async validateCodeResetPassword(userEmail,userCode){
+        return userRepository.validateTokenPasswordReset(userEmail,userCode)
     },
     async changeUserPasswordService(userData){
         return userRepository.updateUserPassword(userData)
+    },
+    async userAcceptTermsService(userId){
+        return userRepository.userAcceptTermsRepository(userId)
     }
 })
 

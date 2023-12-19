@@ -100,7 +100,7 @@ const userController = ({userService}) =>({
     async validateCodeResetPasswordController(req,res){
         let {userEmail,userCode} = req.params
         try {
-            let result = await userService.validateCodeUser(userEmail,userCode)
+            let result = await userService.validateCodeResetPassword(userEmail,userCode)
             res.json({message:"Se ha validado con exito tu codigo",result})
         } catch (error) {
             res.status(500).json({message:error.message})
@@ -112,6 +112,15 @@ const userController = ({userService}) =>({
             res.json({message:"Se ha modificado con exito tu contraseña",result})
         } catch (error) {
             res.status(500).json({message: error.message})            
+        }
+    },
+    async userAcceptTermsController(req,res){
+        let {userId} = req.params
+        try {
+            await userService.userAcceptTermsService(userId)
+            res.json({message:"Has aceptado los terminos y condiciones"})
+        } catch (error) {
+            res.status(500).json({message: error.message})
         }
     }
 })

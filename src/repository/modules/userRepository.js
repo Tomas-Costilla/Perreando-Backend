@@ -86,6 +86,7 @@ const userRepository = () => ({
     if (!userDB) throw new Error("Este email no se encuentra registrado");
     let IsTokenExist = await tokenModel.findOne({ tokenUserEmail: useremail });
     if (IsTokenExist) await tokenModel.deleteOne({ tokenUserEmail: useremail });
+    let randomCode =  Math.round(Math.random()*999999)
     await tokenModel.create({
       tokenUserEmail: useremail,
       tokenNumberCode: randomCode,
@@ -96,8 +97,8 @@ const userRepository = () => ({
       textEmail: `Este es tu codigo para resetear la contraseña: ${randomCode}`,
     });
   },
-  async validateTokenPasswordReset(userEmail) {
-    let IsTokenExist = await tokenModel.findOne({ tokenUserEmail: userEmail });
+  async validateTokenPasswordReset(userEmail,userCode) {
+    let IsTokenExist = await tokenModel.findOne({ tokenUserEmail: userEmail, tokenNumberCode: userCode });
     if (IsTokenExist) {
       return tokenModel.deleteOne({ tokenUserEmail: userEmail });
     }
@@ -111,6 +112,12 @@ const userRepository = () => ({
       { userPassword: newPassword }
     );
   },
+  async userAcceptTermsRepository(userId){
+    return userModel.updateOne({_id: userId},{
+      userFirstLogin:false,
+      userTermsAccept: true
+    })
+  }
 });
 
 module.exports = userRepository;

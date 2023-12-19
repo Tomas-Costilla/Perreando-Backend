@@ -12,7 +12,7 @@ module.exports = (router,{userController})=>{
         .get("/user/validatetokenpassword/:userEmail/:userCode",userController.validateCodeResetPasswordController)
         .put("/user/changeuserpassword",userController.changeUserPasswordController)
         .post("/user",upload.single('userPhoto'),userController.createUserController)
-        .post("/user/signin",passport.authenticate('login',{failureRedirect:"/accessdenied"}),userController.loginUserController)
+        .post("/user/signin",passport.authenticate('login',{failureRedirect:"/user/accessdenied"}),userController.loginUserController)
         .get("/user/accessdenied",userController.userErrorLogin)
         .post("/user/signup",userController.userSignUpController)
         .get("/user/ubications",userController.userGetAllUbicationController)
@@ -21,6 +21,7 @@ module.exports = (router,{userController})=>{
         .get("/user/paw/:userId",IsAuthenticated,userController.getPawUserInfoController)
         .put("/user/paw/:userId",IsAuthenticated,userController.updateUserPawController)
         .put("/user/:userId/image/:userImageName/update",[IsAuthenticated,upload.single('userPhoto')],userController.updatePawImage)
+        .put("/user/terms/:userId",IsAuthenticated,userController.userAcceptTermsController)
 
     return router;
 }
