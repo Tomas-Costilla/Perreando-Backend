@@ -7,7 +7,7 @@ const petModel = new Schema({
     },
     petName:String,
     petAge:Number,
-    petWeight:String,
+    petWeight:Number,
     petType:{
         type: String,
         default: "Perro"

@@ -92,6 +92,14 @@ const bookingRepository = () =>({
             { _id: bookingId },
             { bookingState: "Cancelado" }
           );
+      },
+      async getAllActiveBookingRepository(guestId){
+        return bookingModel.find({bookingGuestId: guestId,bookingState:"Reservada"})
+                         .populate('bookingHostId',{
+                          hostDescription: 1,
+                          hostPrice: 1
+                         })
+        
       }
 })
 

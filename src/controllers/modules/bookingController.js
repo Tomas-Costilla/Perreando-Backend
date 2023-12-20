@@ -43,6 +43,15 @@ const bookingController = ({bookingService}) =>({
         } catch (error) {
             res.status(500).json({message: error.message})
         }
+    },
+    async getAllActiveBookingController(req,res){
+        let {guestId} = req.params
+        try {
+            let response = await bookingService.getAllActiveBookingService(guestId)
+            res.json(response)
+        } catch (error) {
+            res.status(500).json({message: error.message})
+        }
     }
 })
 

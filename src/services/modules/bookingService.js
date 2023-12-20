@@ -15,6 +15,9 @@ const bookingService = ({bookingRepository}) => ({
   async cancelBookingGuestService(bookingId) {
     return bookingRepository.cancelBookingGuestRepository(bookingId)
   },
+  async getAllActiveBookingService(guestId){
+    return bookingRepository.getAllActiveBookingRepository(guestId)
+  }
 });
 
 module.exports = bookingService;

@@ -1,7 +1,7 @@
 
 const hostService = ({hostRepository}) => ({
   async createHostService(data,files) {
-   return hostRepository.createHostData(data,files)
+   return hostRepository.createHostData(data/* ,files */)
   },
   async addGuestToHostService(data) {
     return hostRepository.addGuestToHostRepository(data)

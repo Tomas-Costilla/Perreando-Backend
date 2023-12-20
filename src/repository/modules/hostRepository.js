@@ -11,20 +11,20 @@ const { uploadImage, deleteImage } = require("../../utils/cloudinary");
 const baseRepository = require("../baseRepository");
 
 const hostRepository = () => ({
-  async createHostData(data, files) {
-    let arrayImageNames = files.map((item) => {
+  async createHostData(data/* , files */) {
+    /* let arrayImageNames = files.map((item) => {
       return { hostImageName: item.filename };
-    });
+    }); */
 
     let objectToBD = {
       ...data,
-      hostImages: arrayImageNames,
+      /* hostImages: arrayImageNames, */
     };
 
     /* uploads images */
-    for (const image of files) {
+   /*  for (const image of files) {
       await uploadImage(image.path);
-    }
+    } */
     return hostModel.create(objectToBD);
   },
   async addGuestToHostRepository(guestData) {

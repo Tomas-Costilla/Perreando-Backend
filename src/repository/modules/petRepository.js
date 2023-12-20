@@ -32,7 +32,7 @@ const petRepository = () =>({
         let newPetsDataWithImageUrl = petsDB.map(petItem => {
             return {
                 ...petItem._doc,
-                petImageUrl: `${CLOUDINARY_IMAGEURL}${newPetImage.filename}.webp`
+                petImageUrl: `${CLOUDINARY_IMAGEURL}${petItem.petImageName}.webp`
             }
         })
         return {

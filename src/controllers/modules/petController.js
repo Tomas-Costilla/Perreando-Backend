@@ -54,7 +54,7 @@ const petController = ({petService}) =>({
         let {ownerId} = req.params
         try {
             let result = await petService.getPetsByOwnerService(ownerId)
-            res.json({message: "Tus mascotas",result})
+            res.json(result)
         } catch (error) {
             res.status(500).json({message: error.message})
         }
