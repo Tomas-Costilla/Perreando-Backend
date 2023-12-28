@@ -4,15 +4,15 @@ const deleteUploadFile = require("../../utils/deleteFile")
 const hostController = ({hostService}) => ({
     async createHost(req,res){
         try {
-            await hostService.createHostService(req.body/* ,req.files */)
+            await hostService.createHostService(req.body,req.files)
             res.json({message: "Se ha creado con exito el hospedaje"})
         } catch (error) {
             res.status(500).json({message: error.message})
         }
 
-        /* req.files.forEach((image,index) => {
+        req.files.forEach((image,index) => {
             deleteUploadFile(image.path)
-        }); */
+        });
     },
     async addGuestToHost(req,res){
         try {
@@ -141,6 +141,15 @@ const hostController = ({hostService}) => ({
             res.status(500).json({message: error.message})
         }
         deleteUploadFile(path)
+    },
+    async getHostStatusController(req,res){
+        let {ownerId} = req.params
+        try {
+            let result = await hostService.getHostStatusService(ownerId)
+            res.json(result)
+        } catch (error) {
+            res.status(500).json({message: error.message})
+        }
     }
 })
 

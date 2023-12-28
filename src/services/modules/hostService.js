@@ -1,7 +1,7 @@
 
 const hostService = ({hostRepository}) => ({
   async createHostService(data,files) {
-   return hostRepository.createHostData(data/* ,files */)
+   return hostRepository.createHostData(data,files)
   },
   async addGuestToHostService(data) {
     return hostRepository.addGuestToHostRepository(data)
@@ -47,6 +47,9 @@ const hostService = ({hostRepository}) => ({
   },
   async addImageHost(hostId,image){
     return hostRepository.addImageHostRepository(hostId,image)
+  },
+  async getHostStatusService(ownerId){
+    return hostRepository.getHostStatusRepository(ownerId)
   }
 });
 

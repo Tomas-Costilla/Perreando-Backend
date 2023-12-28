@@ -44,18 +44,29 @@ const bookingRepository = () =>({
               userEmail: 1,
               userPhone: 1,
               userImageName: 1,
-              userGuestAnimalName: 1,
-            });
+            })
+            .populate("bookingPetId",{
+              petName:1,
+              petAge:1,
+              petWeight:1,
+              petImageName:1
+            })
+
+
+            if(dataDb.length===0) return []
+
           let newDataArray = dataDb.map((item) => {
             let {bookingDateStart,bookingDateEnd,bookingCreatedAt,...newObject} = item._doc; 
             return {
               ...newObject,
-              bookingDateStart: moment(item._doc.bookingDateStart).format("YYYY-MM-DD"),
-              bookingDateEnd: moment(item._doc.bookingDateEnd).format("YYYY-MM-DD"),
-              bookingCreatedAt: moment(item._doc.bookingCreatedAt).format("YYYY-MM-DD"),
-              imageFileUri: `${CLOUDINARY_IMAGEURL}${item.bookingGuestId.userImageName}`
+              bookingDateStart: moment(item._doc.bookingDateStart).add(1,'days').format("YYYY-MM-DD"),
+              bookingDateEnd: moment(item._doc.bookingDateEnd).add(1,'days').format("YYYY-MM-DD"),
+              bookingCreatedAt: moment(item._doc.bookingCreatedAt).add(1,'days').format("YYYY-MM-DD"),
+              imageFileUri: `${CLOUDINARY_IMAGEURL}${item.bookingGuestId.userImageName}`,
+              imagePetUri: item.bookingPetId ? `${CLOUDINARY_IMAGEURL}${item.bookingPetId.petImageName}` : ""
             };
           });
+          
           return newDataArray
       },
       async getAllBookingGuestRepository(guestId) {
@@ -94,12 +105,24 @@ const bookingRepository = () =>({
           );
       },
       async getAllActiveBookingRepository(guestId){
-        return bookingModel.find({bookingGuestId: guestId,bookingState:"Reservada"})
+        let dataDB = await bookingModel.find({bookingGuestId: guestId,bookingState:"Reservada"})
                          .populate('bookingHostId',{
                           hostDescription: 1,
                           hostPrice: 1
                          })
+        let arrayWithDates = dataDB.map(item=>{
+          let bookingDateFrom = moment(item.bookingDateStart).add(1,'d').format("DD-MM-YYYY")
+          let bookingDateTo = moment(item.bookingDateEnd).add(1,'d').format("DD-MM-YYYY")
+          return {
+            _id:item._id,
+            bookingHostId: item.bookingHostId,
+            bookingDateFrom,
+            bookingDateTo,
+            bookingTotal: item.bookingTotal
+          }
+        })
         
+        return arrayWithDates
       }
 })
 

@@ -42,9 +42,18 @@ const userController = ({userService}) =>({
             })
         }
     },
-    async userGetAllUbicationController(req,res){
+    async getAllStateController(req,res){
         try {
-            let result = await userService.getAllUbications()
+            let result = await userService.getAllStateService()
+            res.json(result)
+        } catch (error) {
+            res.status(500).status({message: error.message})
+        }
+    },
+    async userGetAllUbicationController(req,res){
+        let{stateId} = req.params
+        try {
+            let result = await userService.getAllUbications(stateId)
             res.json({message: "Localidades disponibles",resultado: result})
         } catch (error) {
             res.status(500).json({message: "Existio un error en la peticion",error: error.message})

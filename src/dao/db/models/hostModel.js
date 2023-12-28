@@ -10,6 +10,7 @@ const hostModel = new Schema({
         ref:"user"
     },
     hostDescription:String,
+    hostPresentation:String,
     hostOwnerCapacity:Number,
     hostPrice:Number,
     hostTypeAnimals:String,
@@ -20,13 +21,16 @@ const hostModel = new Schema({
     hostState:String,
     hostCity:String,
     hostCompleteAddress:String,
+    hostAvailableStartDate:Date,
+    hostAvailableStartEnd:Date,
     hostImages:{
         type:[
             {
                 hostImageName: String
             }
         ]
-    }
+    },
+    hostCreatedAt: {type: Date,default: Date.now()}
 })
 
 hostModel.pre('findOne',function(){

@@ -3,6 +3,7 @@ const {
   hostRating,
   userModel,
   bookingModel,
+  likeModel,
 } = require("../../dao/db");
 const { CLOUDINARY_IMAGEURL } = require("../../config/globals");
 const { default: mongoose } = require("mongoose");
@@ -11,20 +12,20 @@ const { uploadImage, deleteImage } = require("../../utils/cloudinary");
 const baseRepository = require("../baseRepository");
 
 const hostRepository = () => ({
-  async createHostData(data/* , files */) {
-    /* let arrayImageNames = files.map((item) => {
+  async createHostData(data, files) {
+    let arrayImageNames = files.map((item) => {
       return { hostImageName: item.filename };
-    }); */
+    });
 
     let objectToBD = {
       ...data,
-      /* hostImages: arrayImageNames, */
+      hostImages: arrayImageNames,
     };
 
     /* uploads images */
-   /*  for (const image of files) {
+    for (const image of files) {
       await uploadImage(image.path);
-    } */
+    }
     return hostModel.create(objectToBD);
   },
   async addGuestToHostRepository(guestData) {
@@ -50,6 +51,10 @@ const hostRepository = () => ({
         userImageName: 1
       });
 
+    dataDB._doc.hostAvailableStartDate = moment(dataDB._doc.hostAvailableStartDate).add(1,'days').format("YYYY-MM-DD")
+    dataDB._doc.hostAvailableStartEnd = moment(dataDB._doc.hostAvailableStartEnd).add(1,'days').format("YYYY-MM-DD")
+    dataDB._doc.hostCreatedAt = moment(dataDB._doc.hostCreatedAt).add(1,'days').format("YYYY-MM-DD")
+
     let returnData = {
       ...dataDB._doc,
       ImageUri: `${CLOUDINARY_IMAGEURL}${dataDB._doc.hostOwnerId.userImageName}`,
@@ -63,7 +68,11 @@ const hostRepository = () => ({
   },
   async getHostInfobyOwnerRepository(ownerId) {
     let dataRetorned = await hostModel.findOne({ hostOwnerId: ownerId });
-    if (!dataRetorned) throw new Error("El hospedaje no existe");
+    if (!dataRetorned) return {}
+    
+    dataRetorned._doc.hostAvailableStartDate = moment(dataRetorned._doc.hostAvailableStartDate).add(1,'days').format("YYYY-MM-DD")
+    dataRetorned._doc.hostAvailableStartEnd = moment(dataRetorned._doc.hostAvailableStartEnd).add(1,'days').format("YYYY-MM-DD")
+
     return {
       ...dataRetorned._doc,
       hostImages: dataRetorned.hostImages.map((item) => {
@@ -82,12 +91,13 @@ const hostRepository = () => ({
       await bookingModel.updateMany({bookingHostId: userIdHost._id},{bookingState: "Cancelado"})
       await hostRating.findOneAndDelete({ hostOwnerId: hostowId }); 
       await hostModel.findOneAndDelete({ hostOwnerId: hostowId });
+      await likeModel.deleteMany({likeHostId: userIdHost._id })
       return 
   },
   async checkifHostExistRepository(ownerId) {
       const dataDB = await hostModel.findOne({ hostOwnerId: ownerId });
       if (dataDB) return dataDB;
-      else throw new Error("No existe el hospedaje");
+      else return {}
   },
   async getGuestHostRepository(guestId) {
       let guestDB = await userModel.findById(guestId);
@@ -167,6 +177,10 @@ const hostRepository = () => ({
           let averageRating = 0
           if(ratings.length) averageRating = ratings.reduce((acc,val) => acc + val.hostGuestRating,0) / ratings.length
           
+          
+          item._doc.hostAvailableStartDate = moment(item._doc.hostAvailableStartDate).add(1,'days').format("YYYY-MM-DD")
+          item._doc.hostAvailableStartEnd = moment(item._doc.hostAvailableStartEnd).add(1,'days').format("YYYY-MM-DD")
+          item._doc.hostCreatedAt = moment(item._doc.hostCreatedAt).add(1,'days').format("YYYY-MM-DD")
 
           dataWithRatingAndActiveGuests.push({
             ...item._doc,
@@ -236,6 +250,20 @@ const hostRepository = () => ({
     await uploadImage(image.path)
     await hostModel.findByIdAndUpdate(hostId,{$push:{hostImages: {hostImageName: image.filename}}})
     return this.returnDataWithImage(hostId)
+  },
+  async getHostStatusRepository(ownerId){
+    let hostDB = await hostModel.findOne({hostOwnerId: ownerId})
+    if(!hostDB) return {}
+    let countActiveGuest = await bookingModel.countDocuments({bookingHostId: hostDB._id,bookingState: "Reservada"})
+    let countRating = await hostRating.countDocuments({hostOwnerId: hostDB._id})
+    return {
+      ...hostDB._doc,
+      countActiveGuest: countActiveGuest,
+      countRating: countRating,
+      countComments: countRating,
+      countActiveBooking: countActiveGuest
+
+    }
   }
 });
 

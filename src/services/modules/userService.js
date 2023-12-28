@@ -10,8 +10,11 @@ const userService = ({userRepository}) =>({
     async getLoginDataService(userId){
         return userRepository.getLoginUserData(userId)
     },
-    async getAllUbications(){
-        return userRepository.getAllTowns()
+    async getAllStateService(){
+        return userRepository.getAllStateRepository()
+    },
+    async getAllUbications(stateId){
+        return userRepository.getAllTowns(stateId)
     },
     async updateUserDate(userId,userData){
        return userRepository.updateUserData(userId,userData)

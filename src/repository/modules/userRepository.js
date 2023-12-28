@@ -6,6 +6,7 @@ const {
   API_GEO_URL,
   GMAIL_EMAIL,
   GMAIL_PASSWORD,
+  API_GEO_PROVINCIAS,
 } = require("../../config/globals");
 const nodemailer = require("nodemailer");
 const baseRepository = require("../baseRepository");
@@ -49,11 +50,17 @@ const userRepository = () => ({
       userFileUri: `${CLOUDINARY_IMAGEURL}${userDB.userImageName}.webp`,
       userFirstLogin: userDB.userFirstLogin,
       userTermsAccept: userDB.userTermsAccept,
+      userCountryId: userDB.userCountryId
     };
   },
-  async getAllTowns() {
+  async getAllStateRepository(){
+    let response = await fetch(`${API_GEO_PROVINCIAS}`)
+    let data = await response.json()
+    return data.provincias
+  },
+  async getAllTowns(stateId) {
     const response = await fetch(
-      `${API_GEO_URL}?provincia=06&campos=id,nombre&orden=nombre&max=1000`
+      `${API_GEO_URL}?provincia=${stateId}&campos=id,nombre&orden=nombre&max=1000`
     );
     const data = await response.json();
     return data.localidades;

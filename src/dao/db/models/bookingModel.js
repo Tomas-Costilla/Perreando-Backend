@@ -17,6 +17,11 @@ const bookingModel = new Schema({
     bookingDateStart:Date,
     bookingDateEnd:Date,
     bookingState:String,
+    bookingTotal:Number,
+    bookingPetId:{
+        type: mongoose.Schema.Types.ObjectId,
+        ref:"pets"
+    },
     bookingCreatedAt: {type: Date,default: dateArgetina}
 })
 

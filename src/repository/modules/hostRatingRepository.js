@@ -24,7 +24,7 @@ const hostRatingRepository = () =>({
     },
     async checkGuestRatingRepository(hostId,guestId){
             let result = await hostRating.findOne({hostOwnerId: hostId,hostGuestId:guestId})
-            if(!result) throw new Error("Aun no has calificado este hospedaje")
+            if(!result) return {}
             
             return result
 

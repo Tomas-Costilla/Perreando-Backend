@@ -13,4 +13,4 @@ module.exports = (router,{petController}) => {
         .get("/pet/owner/:ownerId",IsAuthenticated,petController.getPetsByOwnerController)
 
     return router;
-}
+}   
