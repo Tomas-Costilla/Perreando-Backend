@@ -6,6 +6,8 @@ const tokenModel = require('./models/tokenModel')
 const petModel = require('./models/petModel')
 const countryModel = require('./models/countryModel')
 const likeModel = require("./models/likeModel")
+const trayModel = require("./models/TrayModel")
+const notificationModel = require("./models/notificationModel")
 
 module.exports = {
     userModel,
@@ -15,5 +17,7 @@ module.exports = {
     tokenModel,
     petModel,
     countryModel,
-    likeModel
+    likeModel,
+    trayModel,
+    notificationModel
 }

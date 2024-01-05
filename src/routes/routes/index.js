@@ -6,6 +6,8 @@ const bookingRoutes = require("./bookingRoutes")
 const petRoutes = require("./petRoutes")
 const countryRoutes = require('./countryRoutes')
 const likeRoutes = require("./likeRoutes")
+const trayRoutes = require("./trayRoutes")
+const notificationRoutes = require("./notificationRoutes")
 
 module.exports = (router) =>({
     userRoutes: userRoutes(router,controllers),
@@ -14,6 +16,8 @@ module.exports = (router) =>({
     bookingRoutes:bookingRoutes(router,controllers),
     petRoutes: petRoutes(router,controllers),
     countryRoutes: countryRoutes(router,controllers),
-    likeRoutes: likeRoutes(router,controllers)
+    likeRoutes: likeRoutes(router,controllers),
+    trayRoutes: trayRoutes(router,controllers),
+    notificationRoutes: notificationRoutes(router,controllers)
 
 })

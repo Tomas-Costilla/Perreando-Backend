@@ -50,6 +50,12 @@ const hostService = ({hostRepository}) => ({
   },
   async getHostStatusService(ownerId){
     return hostRepository.getHostStatusRepository(ownerId)
+  },
+  async getHostByFiltersService(queryParams){
+    return hostRepository.getHostByFiltersRepository(queryParams)
+  },
+  async changeHostStatusService(hostId,dataStatus){
+    return hostRepository.changeHostStatusRepository(hostId,dataStatus)
   }
 });
 

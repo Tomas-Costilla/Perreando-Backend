@@ -5,6 +5,8 @@ const hostRatingRepository = require("./modules/hostRatingRepository")
 const petRepository = require("./modules/petRepository")
 const countryRepository = require('./modules/countryRepository')
 const likeRepository = require("./modules/likeRepository")
+const trayRepository = require("./modules/trayRepository")
+const notificationRepository = require("./modules/notificationRepository")
 
 module.exports = {
     userRepository: userRepository(),
@@ -13,5 +15,7 @@ module.exports = {
     hostRatingRepository: hostRatingRepository(),
     petRepository: petRepository(),
     countryRepository: countryRepository(),
-    likeRepository: likeRepository()
+    likeRepository: likeRepository(),
+    trayRepository:trayRepository(),
+    notificationRepository: notificationRepository()
 }

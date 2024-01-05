@@ -6,6 +6,8 @@ const bookingController = require("./modules/bookingController")
 const petController = require("./modules/petController")
 const countryController = require("./modules/countryController")
 const likeController = require("./modules/likeController")
+const trayController = require("./modules/trayController")
+const notificationController = require("./modules/notificationController")
 
 module.exports = {
     userController: userController(services),
@@ -14,5 +16,7 @@ module.exports = {
     bookingController: bookingController(services),
     petController: petController(services),
     countryController: countryController(services),
-    likeController: likeController(services)    
+    likeController: likeController(services),
+    trayController: trayController(services),
+    notificationController: notificationController(services)
 }

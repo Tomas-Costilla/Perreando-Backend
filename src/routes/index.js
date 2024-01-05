@@ -30,6 +30,8 @@ module.exports = (routes) =>{
         router.use('/api',routes(router).petRoutes)
         router.use('/api',routes(router).countryRoutes)
         router.use('/api',routes(router).likeRoutes)
+        router.use('/api',routes(router).trayRoutes)
+        router.use('/api',routes(router).notificationRoutes)
 
         /* Initial route */
         router.get('/',(req,res)=> res.status(200).json({message: "Bienvenido a la API Perreando-app"}))

@@ -150,6 +150,27 @@ const hostController = ({hostService}) => ({
         } catch (error) {
             res.status(500).json({message: error.message})
         }
+    },
+    async getHostByFiltersController(req,res){
+        let {state,city,total,age,weight,datefrom,dateto} = req.query
+        if(state === "" || city === "" || total ==="" || age === "" || weight === "" || datefrom === "" || dateto ===""){
+            res.status(400).json({message: "Debes ingresar todos los campos para la busqueda de hospedajes"})
+        }
+        try {
+            let result = await hostService.getHostByFiltersService(req.query)
+            res.json(result)
+        } catch (error) {
+            res.status(500).json({message: error.message})
+        }
+    },
+    async changeHostStatusController(req,res){
+        let {hostId} = req.params
+        try {
+            await hostService.changeHostStatusService(hostId,req.body)
+            res.json({message: "Se cambio el estado a la publicacion"})
+        } catch (error) {
+            res.status(500).json({message: message.error})
+        }
     }
 })
 

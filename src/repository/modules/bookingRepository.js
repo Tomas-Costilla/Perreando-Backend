@@ -1,5 +1,5 @@
 const baseRepository = require("../baseRepository")
-const {bookingModel, hostModel, userModel} = require("../../dao/db")
+const {bookingModel, hostModel, userModel, trayModel} = require("../../dao/db")
 const {CLOUDINARY_IMAGEURL} = require("../../config/globals")
 const moment = require("moment");
 const sendEmail = require("../../utils/email");
@@ -11,7 +11,7 @@ const bookingRepository = () =>({
         let bookingDateTo = new Date(data.bookingDateEnd);
 
           let hostData = await hostModel.findOne({_id: data.bookingHostId})
-          let totalGuestHost = await bookingModel.countDocuments({bookingHostId: data.bookingHostId,bookingState: "Reservada"})
+          let totalGuestHost = await bookingModel.countDocuments({bookingHostId: data.bookingHostId,bookingState: "Confirmada"})
           
           if(hostData.hostOwnerCapacity === totalGuestHost) throw new Error("La capacidad del anfitrion esta completa")
 
@@ -19,20 +19,27 @@ const bookingRepository = () =>({
             bookingGuestId: data.bookingGuestId,
             bookingDateStart: bookingDateFrom,
             bookingDateEnd: bookingDateTo,
-            bookingState:"Reservada"
+            bookingState:"Confirmada"
           });
           if (bookingPrevData) throw new Error("Ya tienes una reserva en las mismas fechas!")
           
-          await baseRepository.createData(bookingModel,data)
+          
+          let bookingPostCreatedId = ""
+          await bookingModel.create(data).then(bookingDoc => bookingPostCreatedId = bookingDoc._id)
+          await trayModel.create({
+            trayOwnerId: hostData.hostOwnerId?._id,
+            trayBookingId: bookingPostCreatedId,
+            trayStatus: "Pendiente"
+          })
 
           let {userEmail,userFullName} = hostData.hostOwnerId
           let guestData = await userModel.findById({_id: data.bookingGuestId})
-
+  
           /* send mail confirm reserve to host */
-          await sendEmail({addressee: userEmail,subjectEmail: "Reserva confirmada",textEmail:`${guestData.userFullName} ha realizado una reserva en tu hospedaje!`})
+          await sendEmail({addressee: userEmail,subjectEmail: "Reserva pendiente de aprobacion",textEmail:`Tienes una reserva de ${guestData.userFullName} pendiente de tu aprobacion`})
 
           /*send mail confirm reserve to guest*/
-          return sendEmail({addressee: guestData.userEmail,subjectEmail: "Reserva confirmada",textEmail:`Has confirmado tu reserva en el hospedaje de ${userFullName}`})
+          return sendEmail({addressee: guestData.userEmail,subjectEmail: "Solicitud de reserva",textEmail:`Se ha enviado tu solicitud de reserva al anfitrion ${userFullName}, ahora esta pendiente de su aprobacion`})
 
       },
       async getAllBookingHostRepository(hostId) {
@@ -105,7 +112,7 @@ const bookingRepository = () =>({
           );
       },
       async getAllActiveBookingRepository(guestId){
-        let dataDB = await bookingModel.find({bookingGuestId: guestId,bookingState:"Reservada"})
+        let dataDB = await bookingModel.find({bookingGuestId: guestId,bookingState:["Pendiente aprobacion","Confirmada"]})
                          .populate('bookingHostId',{
                           hostDescription: 1,
                           hostPrice: 1
@@ -118,7 +125,8 @@ const bookingRepository = () =>({
             bookingHostId: item.bookingHostId,
             bookingDateFrom,
             bookingDateTo,
-            bookingTotal: item.bookingTotal
+            bookingTotal: item.bookingTotal,
+            bookingState: item.bookingState
           }
         })
         

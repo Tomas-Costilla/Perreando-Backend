@@ -16,7 +16,10 @@ const bookingModel = new Schema({
     },
     bookingDateStart:Date,
     bookingDateEnd:Date,
-    bookingState:String,
+    bookingState:{
+        type: String,
+        enum:['Confirmada','Finalizada','Pendiente aprobacion','Rechazada','Cancelada']
+    },
     bookingTotal:Number,
     bookingPetId:{
         type: mongoose.Schema.Types.ObjectId,

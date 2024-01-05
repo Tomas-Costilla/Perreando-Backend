@@ -5,7 +5,10 @@ const bookingService = require("./modules/bookingService")
 const petService = require("./modules/petService")
 const countryService = require("./modules/countryService")
 const likeService = require("./modules/likeService")
+const trayService = require("./modules/trayService")
+const notificationService = require("./modules/notificationService")
 const repositories = require("../repository")
+
 
 
 module.exports = {
@@ -15,5 +18,7 @@ module.exports = {
     bookingService: bookingService(repositories),
     petService: petService(repositories),
     countryService: countryService(repositories),
-    likeService: likeService(repositories)
+    likeService: likeService(repositories),
+    trayService:trayService(repositories),
+    notificationService: notificationService(repositories)
 }

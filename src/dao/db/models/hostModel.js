@@ -23,6 +23,7 @@ const hostModel = new Schema({
     hostCompleteAddress:String,
     hostAvailableStartDate:Date,
     hostAvailableStartEnd:Date,
+    hostIsActive:Boolean,
     hostImages:{
         type:[
             {

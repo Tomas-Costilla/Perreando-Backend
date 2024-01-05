@@ -5,8 +5,9 @@ const upload = multer({dest: 'uploads/'})
 module.exports = (router,{hostController}) => {
     router
     .post("/host",[IsAuthenticated,upload.array('hostPhotos',3)],hostController.createHost)
-    .post("/host/guest",IsAuthenticated,hostController.addGuestToHost)
+    .get("/host/filter",IsAuthenticated,hostController.getHostByFiltersController)
     .get("/host/search",IsAuthenticated,hostController.getInfobyUbicationController)
+    .post("/host/guest",IsAuthenticated,hostController.addGuestToHost)
     .get("/host/:id",IsAuthenticated,hostController.getHostInfo)
     .get("/host/owner/:id",IsAuthenticated,hostController.getHostInfobyOwner)
     .get("/host/status/:ownerId",IsAuthenticated,hostController.getHostStatusController)
@@ -20,6 +21,9 @@ module.exports = (router,{hostController}) => {
     .put("/host/guest/endbooking/:hostId",IsAuthenticated,hostController.EndBookingHostController)
     .delete("/host/:hostId/image/:imageName",IsAuthenticated,hostController.deleteHostImageController)
     .post("/host/:hostId/updateimage",[IsAuthenticated,upload.single('uploadImage')],hostController.addImageHostController)
+    .put("/host/state/:hostId",IsAuthenticated,hostController.changeHostStatusController)
 
     return router;
 }
+
+/*     /* .get("/host/search",IsAuthenticated,hostController.getInfobyUbicationController) */ 

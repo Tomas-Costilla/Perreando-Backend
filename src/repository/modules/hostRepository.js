@@ -137,7 +137,7 @@ const hostRepository = () => ({
       let results = [];
       if (ubication !== "all") {
         results = await hostModel
-          .find({ hostLocation: ubication })
+          .find({ hostLocation: ubication,hostIsActive: true })
           .populate("hostOwnerId", {
             _id: 1,
             userFullName: 1,
@@ -151,7 +151,7 @@ const hostRepository = () => ({
             userAddressExtraInfo: 1,
           });
       } else
-        results = await hostModel.find().populate("hostOwnerId", {
+        results = await hostModel.find({hostIsActive: true}).populate("hostOwnerId", {
           _id: 1,
           userFullName: 1,
           userEmail: 1,
@@ -264,6 +264,75 @@ const hostRepository = () => ({
       countActiveBooking: countActiveGuest
 
     }
+  },
+  async getHostByFiltersRepository(queryParams){
+    let {state,city,total,age,weight,datefrom,dateto} = queryParams
+    /* console.log(queryParams) */
+   /* console.log(moment(datefrom,"DD/MM/YYYY"))
+   console.log(moment(dateto,"DD/MM/YYYY")) */
+   let dateFromConvert = moment(datefrom,"DD/MM/YYYY")
+   let dateToConvert = moment(dateto,"DD/MM/YYYY")
+    let hostDB = await hostModel.find({
+      $and:[
+        {
+          "hostAnimalAgeFrom":{"$lte": 1}
+        },
+        {
+          "hostAnimalAgeTo":{"$gte": age}
+        },
+        {
+          "hostAnimalWeightFrom": {"$lte": 1}
+        },
+        {
+          "hostAnimalWeightTo":{"$gte": weight}
+        },
+       {
+        "hostAvailableStartDate": {"$lte": dateFromConvert}
+       },
+       {
+        "hostAvailableStartEnd": {"$gte": dateToConvert}
+       }
+      ],
+      hostState: state,
+      hostCity:city,
+      hostPrice:{"$gte": 1,"$lte": total },
+      hostIsActive: true
+    }).populate("hostOwnerId", {
+      _id: 1,
+      userFullName: 1,
+      userEmail: 1,
+      userPhone: 1,
+      userImageName: 1})
+
+      if(hostDB.length===0) return []
+
+      let dataWithRatingAndActiveGuests = []
+      for(const item of hostDB){
+        /* console.log(item._doc._id) */
+          let activeGuests = await bookingModel.find({bookingHostId: item._doc._id,bookingState:"Reservada"})
+          let ratings = await hostRating.find({hostOwnerId: item._doc._id})
+          /* console.log(ratings) */
+          let averageRating = 0
+          if(ratings.length) averageRating = ratings.reduce((acc,val) => acc + val.hostGuestRating,0) / ratings.length
+          
+          
+          item._doc.hostAvailableStartDate = moment(item._doc.hostAvailableStartDate).add(1,'days').format("YYYY-MM-DD")
+          item._doc.hostAvailableStartEnd = moment(item._doc.hostAvailableStartEnd).add(1,'days').format("YYYY-MM-DD")
+          item._doc.hostCreatedAt = moment(item._doc.hostCreatedAt).add(1,'days').format("YYYY-MM-DD")
+
+          dataWithRatingAndActiveGuests.push({
+            ...item._doc,
+            imageUri: `${CLOUDINARY_IMAGEURL}${item.hostOwnerId.userImageName}`,
+            hostImages: item._doc.hostImages.map((field,index) => { return {ImageUri: `${CLOUDINARY_IMAGEURL}${field.hostImageName}`}}),
+            averageRating: averageRating,
+            activeGuests: activeGuests.length
+          }) 
+      }
+    
+    return dataWithRatingAndActiveGuests
+  },
+  async changeHostStatusRepository(hostId,dataStatus){
+    return hostModel.updateOne({_id: hostId},dataStatus)
   }
 });
 
